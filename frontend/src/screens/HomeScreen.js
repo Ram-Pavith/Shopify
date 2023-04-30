@@ -10,7 +10,7 @@ import ProductCarousel from '../components/ProductCarousel'
 import Meta from '../components/Meta'
 import { listProducts } from '../actions/productActions'
 import "./HomeScreen.css";
-
+import axios from 'axios'
 //temp line
 const products = require('../data/products')
 console.log(products)
