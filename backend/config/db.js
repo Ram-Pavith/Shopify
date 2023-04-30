@@ -24,7 +24,7 @@ const connectDB = async () =>{
       user:"postgres",
       port:5432,
       password:"postgres",
-      database:"Shopify"
+      database:"ShopifyDB"
   }) 
   }
   catch(error){
