@@ -9,7 +9,7 @@ import Paginate from '../components/Paginate'
 import ProductCarousel from '../components/ProductCarousel'
 import Meta from '../components/Meta'
 import { listProducts } from '../actions/productActions'
-import "./HomeScreen.css";
+import "./HomeScreen.scss";
 
 //temp line
 const products = require('../data/products')
@@ -68,7 +68,7 @@ const HomeScreen = ({ match }) => {
        <Row>
              {products.map((item) => (
                <Col key={item._id} sm={12} md={6} lg={4} xl={3}>
-<div className="image">
+{/* <div className="image">
           <img
             src={
               item.image
@@ -81,7 +81,10 @@ const HomeScreen = ({ match }) => {
         <h2>{item?.name}</h2>
         <div className="prices">
           <h3>${item.price}</h3>
-        </div>               </Col>
+        </div>                */}
+           <Product product={item} />
+
+        </Col>
              ))}
         </Row>
     </div>
