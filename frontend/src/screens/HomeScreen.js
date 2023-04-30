@@ -9,7 +9,7 @@ import Paginate from '../components/Paginate'
 import ProductCarousel from '../components/ProductCarousel'
 import Meta from '../components/Meta'
 import { listProducts } from '../actions/productActions'
-import "./HomeScreen.scss";
+//import "./HomeScreen.scss";
 
 //temp line
 const products = require('../data/products')
