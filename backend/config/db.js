@@ -17,19 +17,27 @@
 
 // export default connectDB
 import pg from 'pg'
-const connectDB = async () =>{
-  try{
-    const conn = new pg.Pool({
-      host:"localhost",
-      user:"postgres",
-      port:5432,
-      password:"postgres",
-      database:"ShopifyDB"
-  }) 
-  }
-  catch(error){
-    console.error(`Error: ${error.message}`.red.underline.bold)
-    process.exit(1)
-  }
-}
-export default connectDB
+// const pool = async () =>{
+//   try{
+//     pg.Pool({
+//       host:"localhost",
+//       user:"postgres",
+//       port:5432,
+//       password:"postgres",
+//       database:"ShopifyTestDB"
+//   }) 
+//   }
+//   catch(error){
+//     console.error(`Error: ${error.message}`.red.underline.bold)
+//     process.exit(1)
+//   }
+// }
+
+const pool = new pg.Pool({
+  host:"localhost",
+  user:"postgres",
+  port:5432,
+  password:"postgres",
+  database:"ShopifyTestDB"
+})
+export default pool

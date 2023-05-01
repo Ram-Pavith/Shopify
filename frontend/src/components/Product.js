@@ -2,32 +2,64 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Card } from 'react-bootstrap'
 import Rating from './Rating'
-
+import "./Product.css"
 const Product = ({ product }) => {
   return (
     <Card className='my-3 p-3 rounded'>
-      <Link to={`/product/${product._id}`}>
-        <Card.Img src={product.image} variant='top' />
-      </Link>
-
+      <Link className="link" to={`/product/${product.product_id}`}>
       <Card.Body>
-        <Link to={`/product/${product._id}`}>
-          <Card.Title as='div'>
-            <strong>{product.name}</strong>
-          </Card.Title>
-        </Link>
-
-        <Card.Text as='div'>
-          <Rating
-            value={product.rating}
-            text={`${product.numReviews} reviews`}
+      <div className="card">
+        <div className="image">
+          {product.category.includes("New Season") && <span>New Season</span>}
+          <img
+            src={
+              product.image_url
+            }
+            alt=""
+            className="mainImg"
           />
-        </Card.Text>
-
-        <Card.Text as='h3'>${product.price}</Card.Text>
+        </div>
+        <h2>{product?.name}</h2>
+        <div className="prices">
+          <h3>${product.price}</h3>
+        </div>
+      </div>
       </Card.Body>
+      </Link>
     </Card>
   )
 }
+
+const Card = ({ item }) => {
+  console.log(item);
+  return (
+    <Link className="link" to={`/product/${item.id}`}>
+      <div className="card">
+        <div className="image">
+          {item?.attributes.isNew && <span>New Season</span>}
+          <img
+            src={
+              process.env.REACT_APP_UPLOAD_URL + item.attributes?.img?.data?.attributes?.url
+            }
+            alt=""
+            className="mainImg"
+          />
+          <img
+            src={
+              process.env.REACT_APP_UPLOAD_URL + item.attributes?.img2?.data?.attributes?.url
+            }
+            alt=""
+            className="secondImg"
+          />
+        </div>
+        <h2>{item?.attributes.title}</h2>
+        <div className="prices">
+          <h3>${item.oldPrice || item?.attributes.price + 20}</h3>
+          <h3>${item?.attributes.price}</h3>
+        </div>
+      </div>
+    </Link>
+  );
+};
 
 export default Product
