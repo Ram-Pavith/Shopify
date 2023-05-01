@@ -9,10 +9,16 @@ import Paginate from '../components/Paginate'
 import ProductCarousel from '../components/ProductCarousel'
 import Meta from '../components/Meta'
 import { listProducts } from '../actions/productActions'
-//import "./HomeScreen.scss";
+import "./HomeScreen.css";
+import axios from 'axios'
+import products from '../data/products'
 
 //temp line
-const products = require('../data/products')
+// const x =async()=>{
+//   const products = await axios.get('https://localhost:5004/api/products')//require('../data/products')
+//   return products
+// }
+// const products = 
 console.log(products)
 const HomeScreen = ({ match }) => {
   const keyword = match.params.keyword
@@ -68,21 +74,21 @@ const HomeScreen = ({ match }) => {
        <Row>
              {products.map((item) => (
                <Col key={item._id} sm={12} md={6} lg={4} xl={3}>
-{/* <div className="image">
+<div className="card">
+        <div className="image">
           <img
             src={
-              item.image
+              item.image_url
             }
             alt=""
             className="mainImg"
           />
-         
         </div>
         <h2>{item?.name}</h2>
         <div className="prices">
-          <h3>${item.price}</h3>
-        </div>                */}
-           <Product product={item} />
+          <h3>${item?.price}</h3>
+        </div>
+      </div>              
 
         </Col>
              ))}
