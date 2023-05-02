@@ -6,7 +6,7 @@ const mail = {signupMail,resetPasswordMail,forgotPasswordMail}
 const createAccount = async (req, res) => {
   const { token, refreshToken, user } = await authService.signUp(req.body);
 
-  if (process.env.NODE_ENV !== "test") {
+  if (process.env.NODE_ENV === "test") {
     await mail.signupMail(user.email, user.fullname.split(" ")[0]);
   }
 
@@ -23,12 +23,11 @@ const createAccount = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-  const { email1, password1 } = req.body;
-  const{email,password,is_admin} = await userService.getUserByEmail(email1)
+  const { email, password } = req.body;
+  // const{email,password,is_admin} = await userService.getUserByEmail(email1)
   const { token, refreshToken, user } = await authService.login(
     email,
-    password,
-    is_admin
+    password
   );
 
   res.header("auth-token", token);

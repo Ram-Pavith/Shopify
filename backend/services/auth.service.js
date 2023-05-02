@@ -35,7 +35,7 @@ class AuthService {
 
       if (validateUser(email, password)) {
         const salt = await bcrypt.genSalt();
-        const hashedPassword = true//await bcrypt.hash(password, salt);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         const userByEmail = await getUserByEmailDb(email);
         const userByUsername = await getUserByUsernameDb(username);
@@ -53,15 +53,15 @@ class AuthService {
           password: hashedPassword,
         });
 
-        const { id: cart_id } = await createCartDb(newUser.user_id);
+        const { cart_id: cart_id } = await createCartDb(newUser.user_id);
         const token = await this.signToken({
-          id: newUser.user_id,
-          roles: newUser.roles,
-          cart_id,
+          user_id: newUser.user_id,
+          is_admin: newUser.is_admin,
+          cart_id:cart_id,
         });
         const refreshToken = await this.signRefreshToken({
-          id: newUser.user_id,
-          roles: newUser.roles,
+          user_id: newUser.user_id,
+          is_admin: newUser.is_admin,
           cart_id,
         });
 
@@ -70,7 +70,6 @@ class AuthService {
           refreshToken,
           user: {
             user_id: newUser.user_id,
-            fullname: newUser.fullname,
             username: newUser.username,
             email: newUser.email,
           },
@@ -83,13 +82,13 @@ class AuthService {
     }
   }
 
-  async login(email, password,is_admin) {
+  async login(requestEmail, password,is_admin) {
     try {
-      if (!validateUser(email, password)) {
+      if (!validateUser(requestEmail, password)) {
         throw new ErrorHandler(403, "Invalid login");
       }
 
-      const user = await getUserByEmailDb(email);
+      const user = await getUserByEmailDb(requestEmail);
 
       if (!user) {
         throw new ErrorHandler(403, "Email or password incorrect.");
@@ -105,16 +104,17 @@ class AuthService {
         is_admin,
         cart_id,
         username,
+        email,
       } = user;
-      const isCorrectPassword = password //await bcrypt.compare(password, dbPassword);
+      const isCorrectPassword = await bcrypt.compare(password, dbPassword);
 
       if (!isCorrectPassword) {
         throw new ErrorHandler(403, "Email or password incorrect.");
       }
 
-      const token = await this.signToken({ id: user_id, is_admin:is_admin, cart_id:cart_id });
+      const token = await this.signToken({ user_id: user_id, is_admin:is_admin, cart_id:cart_id });
       const refreshToken = await this.signRefreshToken({
-        id: user_id,
+        user_id: user_id,
         is_admin:is_admin,
         cart_id:cart_id,
       });
@@ -124,6 +124,7 @@ class AuthService {
         user: {
           user_id,
           username,
+          email
         },
       };
     } catch (error) {
@@ -312,7 +313,7 @@ class AuthService {
     try {
       const payload = jwt.verify(token, process.env.REFRESH_SECRET);
       return {
-        id: payload.id,
+        user_id: payload.user_id,
         is_admin: payload.is_admin,
         cart_id: payload.cart_id,
       };

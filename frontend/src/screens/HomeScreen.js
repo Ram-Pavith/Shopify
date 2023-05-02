@@ -11,7 +11,7 @@ import Meta from '../components/Meta'
 // import { listProducts } from '../actions/productActions'
 import "./HomeScreen.css";
 import axios from 'axios'
-// import products from '../data/products'
+import products from '../data/products'
 
 
 const HomeScreen = ({ match }) => {
@@ -19,16 +19,13 @@ const HomeScreen = ({ match }) => {
 
   const pageNumber = match.params.pageNumber || 1
 
-  const [products,setProducts] = useState({})
-
   //temp line
-  async function x(){
-    const productsPromise = await axios.get('http://localhost:5004/api/products')//require('../data/products')
-    setProducts(productsPromise.data)
-    console.table(products)
-  }
-
-  x()
+  // async function x(){
+  //   const productsPromise = await axios.get('http://localhost:5004/api/products')//require('../data/products')
+  //   setProducts(productsPromise.data)
+  //   console.table(products)
+  //   return products
+  // }
 
   const dispatch = useDispatch()
 
@@ -77,18 +74,31 @@ const HomeScreen = ({ match }) => {
     // </>
     //temp stuff
     <div>
-       <Row>
-             {/* {products.map((product) => (
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <Message variant='danger'>{error}</Message>
+      ) : (
+        <>
+          <Row>
+             {products.map((product) => (
               <Col key={product.product_id} sm={12} md={6} lg={4} xl={3}>
                 <Product product={product} />
               </Col>
-             ))} */}
+             ))}
              <table>
               <thead>
                 {products[0].name}
               </thead>
              </table>
         </Row>
+        <Paginate
+            pages={pages}
+            page={page}
+            keyword={keyword ? keyword : ''}
+          />
+        </>
+       )}
     </div>
   )
 }
