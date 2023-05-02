@@ -44,6 +44,15 @@ const getProductByNameDb = async ( name ) => {
   return product[0];
 };
 
+const getProductByCategoryDb = async (category) => {
+  const likeCategory = '%'+category+'%'
+  const {rows:product} = await pool.query(
+    `select * from products where category like $1`,
+    [likeCategory]
+  )
+  return product;
+}
+
 const updateProductDb = async ({ name, price, description, image_url, brand, category, count_in_stock, product_id,shipping_price,tax_price,total }) => {
   const { rows: product } = await pool.query(
     "UPDATE products set name = $1, price = $2, description = $3 ,image_url = $4,brand=$5,category=$6,count_in_stock=$7,shipping_price=$9,tax_prie=$10,total=$11 where product_id = $8 returning *",
@@ -65,6 +74,7 @@ export {
   getProductDb,
   getProductByNameDb,
   createProductDb,
+  getProductByCategoryDb,
   updateProductDb,
   deleteProductDb,
   getAllProductsDb,

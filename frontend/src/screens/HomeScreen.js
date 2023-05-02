@@ -8,22 +8,27 @@ import Loader from '../components/Loader'
 import Paginate from '../components/Paginate'
 import ProductCarousel from '../components/ProductCarousel'
 import Meta from '../components/Meta'
-import { listProducts } from '../actions/productActions'
+// import { listProducts } from '../actions/productActions'
 import "./HomeScreen.css";
 import axios from 'axios'
-import products from '../data/products'
+// import products from '../data/products'
 
-//temp line
-// const x =async()=>{
-//   const products = await axios.get('https://localhost:5004/api/products')//require('../data/products')
-//   return products
-// }
-// const products = 
-console.log(products)
+
 const HomeScreen = ({ match }) => {
   const keyword = match.params.keyword
 
   const pageNumber = match.params.pageNumber || 1
+
+  const [products,setProducts] = useState({})
+
+  //temp line
+  async function x(){
+    const productsPromise = await axios.get('http://localhost:5004/api/products')//require('../data/products')
+    setProducts(productsPromise.data)
+    console.table(products)
+  }
+
+  x()
 
   const dispatch = useDispatch()
 
@@ -32,9 +37,10 @@ const HomeScreen = ({ match }) => {
   const { loading, error, page, pages } = productList
   // const { loading, error, products, page, pages } = productList
 
-  useEffect(() => {
-    dispatch(listProducts(keyword, pageNumber))
-  }, [dispatch, keyword, pageNumber])
+  // useEffect(() => {
+  //   dispatch(listProducts(keyword, pageNumber))
+
+  // }, [dispatch, keyword, pageNumber])
 
   return (
     //uncomment
@@ -72,26 +78,16 @@ const HomeScreen = ({ match }) => {
     //temp stuff
     <div>
        <Row>
-             {products.map((item) => (
-               <Col key={item._id} sm={12} md={6} lg={4} xl={3}>
-<div className="card">
-        <div className="image">
-          <img
-            src={
-              item.image_url
-            }
-            alt=""
-            className="mainImg"
-          />
-        </div>
-        <h2>{item?.name}</h2>
-        <div className="prices">
-          <h3>${item?.price}</h3>
-        </div>
-      </div>              
-
-        </Col>
-             ))}
+             {/* {products.map((product) => (
+              <Col key={product.product_id} sm={12} md={6} lg={4} xl={3}>
+                <Product product={product} />
+              </Col>
+             ))} */}
+             <table>
+              <thead>
+                {products[0].name}
+              </thead>
+             </table>
         </Row>
     </div>
   )

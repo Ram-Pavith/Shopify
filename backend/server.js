@@ -14,7 +14,7 @@ import compression from "compression"
 import unknownEndpoint from "./middleware/unKnownEndpoint.js"
 import { handleError } from "./helpers/error.js"
 import loggerMiddleware from './middleware/loggerMiddleware.js'
-const PORT = 5004
+const PORT = process.env.PORT||5004
 
 const app = express()
 

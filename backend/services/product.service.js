@@ -2,6 +2,7 @@ import {
   getAllProductsDb,
   createProductDb,
   getProductDb,
+  getProductByCategoryDb,
   updateProductDb,
   deleteProductDb,
   getProductByNameDb,
@@ -50,6 +51,18 @@ class ProductService {
       throw new ErrorHandler(error.statusCode, error.message);
     }
   };
+
+  getProductByCategory = async (category) => {
+    try{
+      const product = await getProductByCategoryDb(category)
+      if(!product){
+        throw new ErrorHandler(404, "No Products Found in the Category")
+      }
+      return product
+    } catch(error){
+      throw new ErrorHandler(error.statusCode, error.message)
+    }
+  }
 
   updateProduct = async (data) => {
     try {

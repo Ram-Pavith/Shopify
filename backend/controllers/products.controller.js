@@ -52,6 +52,12 @@ const getProductByName = async (req, res) => {
   const product = await productService.getProductByName(req.params.name);
   res.status(200).json(product);
 };
+
+const getProductByCategory = async (req,res) => {
+  const product = await productService.getProductByCategory(req.params.category)
+  res.status(200).json(product)
+}
+
 const updateProduct = async (req, res) => {
   const { name, price, description, image_url, city, state, country } = req.body;
   const { product_id } = req.params.product_id;
@@ -106,6 +112,7 @@ const getProductReviews = async (req, res) => {
   }
 };
 
+
 const createProductReview = async (req, res) => {
   const { product_id, comment, rating } = req.body;
   const user_id = req.user.user_id;
@@ -145,6 +152,7 @@ export {
   deleteProduct,
   getAllProducts,
   getProductByName,
+  getProductByCategory,
   getProductReviews,
   updateProductReview,
   createProductReview,

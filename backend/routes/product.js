@@ -9,6 +9,7 @@ import {
   getProductReviews,
   createProductReview,
   updateProductReview,
+  getProductByCategory,
 } from "../controllers/products.controller.js"
 import verifyAdmin from "../middleware/verifyAdmin.js"
 import verifyToken from "../middleware/verifyToken.js"
@@ -26,6 +27,10 @@ route
   .get(getProductByName)
   .put(verifyToken, verifyAdmin, updateProduct)
   .delete(verifyToken, verifyAdmin, deleteProduct);
+
+route
+  .route("/category/:category")
+  .get(getProductByCategory)
 
 route
   .route("/:product_id/reviews")
