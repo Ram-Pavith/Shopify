@@ -8,7 +8,7 @@ const client = redis.createClient(REDIS_PORT);
 function cache(req, res, key, next) {
 client.get(key, (err, data) => {
     if (err) throw err;
-
+    console.log("in cache")
     if (data !== null) {
     return data
     } else {

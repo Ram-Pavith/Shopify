@@ -12,7 +12,7 @@ const getAllProducts = async (req, res) => {
     const products = await productService.getAllProducts(page);
     responseProducts = products
     // Set data to Redis
-    client.setex(key, 3600, products, products,(err,reply)=>{
+    client.setex(key, 3600, products,(err,reply)=>{
       if(err){
         console.error(err)
       }
