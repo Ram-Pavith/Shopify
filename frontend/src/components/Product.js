@@ -2,31 +2,31 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Card } from 'react-bootstrap'
 import Rating from './Rating'
-import "./Product.css"
+
 const Product = ({ product }) => {
   return (
-      <Link className="link" to={`/product/${product.product_id}`}>
-      <div className="card">
-        <div className="image">
-          {product.category.includes("New Season") && <span>New Season</span>}
-          <img
-            src={
-              product.image_url
-            }
-            alt=""
-            className="mainImg"
-          />
-        </div>
-        <h2>{product?.name}</h2>
-        <div className="prices">
-          <h3>${product.price}</h3>
-        </div>
-        <Rating
-            value={product.rating}
-            text={`${product.num_reviews} reviews`}
-          />
-      </div>
+    <Card className='my-3 p-3 rounded'>
+      <Link to={`/product/${product._id}`}>
+        <Card.Img src={product.image} variant='top' />
       </Link>
+
+      <Card.Body>
+        <Link to={`/product/${product._id}`}>
+          <Card.Title as='div'>
+            <strong>{product.name}</strong>
+          </Card.Title>
+        </Link>
+
+        <Card.Text as='div'>
+          <Rating
+            value={product.rating}
+            text={`${product.numReviews} reviews`}
+          />
+        </Card.Text>
+
+        <Card.Text as='h3'>${product.price}</Card.Text>
+      </Card.Body>
+    </Card>
   )
 }
 
