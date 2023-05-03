@@ -21,7 +21,7 @@ import {
   ORDER_DELIVER_REQUEST,
   ORDER_DELIVER_RESET,
   ORDER_CREATE_RESET,
-} from '../constants/orderConstants'
+} from '../constants/orderConstants.js'
 
 export const orderCreateReducer = (state = {}, action) => {
   switch (action.type) {

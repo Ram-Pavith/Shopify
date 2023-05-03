@@ -21,8 +21,8 @@ import {
   PRODUCT_TOP_REQUEST,
   PRODUCT_TOP_SUCCESS,
   PRODUCT_TOP_FAIL,
-} from '../constants/productConstants'
-import { logout } from './userActions'
+} from '../constants/productConstants.js'
+import { logout } from './userActions.js'
 
 export const listProducts = (keyword = '', pageNumber = '') => async (
   dispatch

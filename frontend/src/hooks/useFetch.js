@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { makeRequest } from "../makeRequest";
+import { makeRequest } from "../makeRequest.js";
 
 const useFetch = (url) => {
   const [data, setData] = useState(null);
