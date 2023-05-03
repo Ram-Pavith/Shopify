@@ -10,7 +10,7 @@ import Products from "./pages/Products/Products.jsx";
 import "./app.scss"
 import Login from "./pages/Login/Login.jsx";
 import Register from "./pages/Register/Register.jsx";
-import { Container } from 'react-bootstrap';
+//import { Container } from 'react-bootstrap';
 
 const Layout = () => {
   return (
