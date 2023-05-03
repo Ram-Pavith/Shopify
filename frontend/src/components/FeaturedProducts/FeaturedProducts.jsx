@@ -4,9 +4,18 @@ import "./FeaturedProducts.scss";
 import useFetch from "../../hooks/useFetch";
 
 const FeaturedProducts = ({ type }) => {
-  const { data, loading, error } = useFetch(
-    `/products?populate=*&[filters][type][$eq]=${type}`
-  );
+  console.log(type)
+    const { products, loading, error } = useFetch(
+      `/api/products/category/${type}`
+    );
+    const data = products
+      console.log(data)
+  // if(type==='Trending'){
+  //   const { data, loading, error } = useFetch(
+  //     `/api/products/`
+  //   );
+  //   data.filter((x)=>x.num_reviews>4.5)
+  // }
 
   return (
     <div className="featuredProducts">
