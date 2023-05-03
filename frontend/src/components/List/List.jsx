@@ -25,9 +25,9 @@ const List = ({ subCats, maxPrice, sort, category }) => {
   //   fetchProducts()
   // },[category])
   //const productLists = useSelector((state)=>state.productList)
-  const {loading,error,products} = listProductsByCategory(category)
-  const data = products
-
+  const {loading,error,data} = listProductsByCategory(category)
+  const products = data
+  console.log(products)
 
   return (
     <div className="list">
