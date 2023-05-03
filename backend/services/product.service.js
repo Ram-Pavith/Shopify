@@ -12,7 +12,7 @@ import { logger } from "../utils/logger.js";
 
 class ProductService {
   getAllProducts = async (page) => {
-    const limit = 12;
+    const limit = 50;
     const offset = (page - 1) * limit;
     try {
       return await getAllProductsDb({ limit, offset });

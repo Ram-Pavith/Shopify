@@ -6,7 +6,7 @@ import './bootstrap.min.css'
 import './index.css'
 import App from './App.js'
 import * as serviceWorker from './serviceWorker.js'
-import { PersistGate } from "redux-persist/integration/react";
+import { PersistGate } from "redux-persist";
 
 ReactDOM.render(
   <Provider store={store}>

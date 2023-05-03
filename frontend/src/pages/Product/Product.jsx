@@ -1,12 +1,12 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Product.scss";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import BalanceIcon from "@mui/icons-material/Balance";
 import useFetch from "../../hooks/useFetch";
 import { useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../actions/cartActions.js";
 import { listProductDetails } from "../../actions/productActions";
 import axios from 'axios'
@@ -18,103 +18,90 @@ const Product = () => {
   const [quantity, setQuantity] = useState(1);
   // const [product,setProduct] = useState({})
   // const [loading,setLoading] = useState(true)
-  const dispatch = useDispatch()
-  const {data,isLoading:loading,error} = listProductDetails()
-  // const x = async () =>{
-  //   const { data } = await axios.get(`http://localhost:5000/api/products/${id}`)
-  //   console.log(data)
-  //   //setProduct(data)
-  //   // setLoading(false)
-  // }
-  //x()
-  // const data = product
-  //dispatch(listProductDetails(id)).then(data=>console.log(data))//useFetch(`/products/${id}`);
-  //console.log(data)
-  //console.log(listProductDetails(id))
-
+  // const {data,isLoading:loading,error} = listProductDetails()
+  const productDetails = useSelector((state) => state.productDetails);
+  const { loading,product, error } = productDetails
+  const dispatch = useDispatch();
+ useEffect(()=>{
+  dispatch(listProductDetails(id))
+  },[dispatch,id])
+  const data = product
   if(loading){
     return <BarLoader/>
   }
   else{
      return (
-    <div className="product">
-        {/* <>
-          <div className="left">
-            <div className="images">
-              <img
-                src={
-                  data.image_url
-                }
-                alt=""
-                onClick={(e) => setSelectedImg("img")}
-              />
-            </div>
-            <div className="mainImg">
-              <img
-                src={
-                  process.env.REACT_APP_UPLOAD_URL +
-                  data?.attributes[selectedImg]?.data?.attributes?.url
-                }
-                alt=""
-              />
-            </div>
+      <div className="product">
+      <>
+        <div className="left">
+          <div className="images">
+            <img
+              src={
+                data.image_url
+              }
+              alt=""
+              onClick={(e) => setSelectedImg("img")}
+            />
           </div>
-          <div className="right">
-            <h1>{data?.attributes?.title}</h1>
-            <span className="price">${data?.attributes?.price}</span>
-            <p>{data?.attributes?.desc}</p>
-            <div className="quantity">
-              <button
-                onClick={() =>
-                  setQuantity((prev) => (prev === 1 ? 1 : prev - 1))
-                }
-              >
-                -
-              </button>
-              {quantity}
-              <button onClick={() => setQuantity((prev) => prev + 1)}>+</button>
-            </div>
+          <div className="mainImg">
+            <img
+              src={
+               data.image_url
+              }
+              alt=""
+            />
+          </div>
+        </div>
+        <div className="right">
+          <h1>{data?.name}</h1>
+          <span className="price">${data?.price}</span>
+          {/* <p>{data?.attributes?.desc}</p> */}
+          <div className="quantity">
             <button
-              className="add"
               onClick={() =>
-                dispatch(
-                  addToCart({
-                    id: data.id,
-                    title: data.attributes.title,
-                    desc: data.attributes.desc,
-                    price: data.attributes.price,
-                    img: data.attributes.img.data.attributes.url,
-                    quantity,
-                  })
-                )
+                setQuantity((prev) => (prev === 1 ? 1 : prev - 1))
               }
             >
-              <AddShoppingCartIcon /> ADD TO CART
+              -
             </button>
-            <div className="links">
-              <div className="item">
-                <FavoriteBorderIcon /> ADD TO WISH LIST
-              </div>
-              <div className="item">
-                <BalanceIcon /> ADD TO COMPARE
-              </div>
+            {quantity}
+            <button onClick={() => setQuantity((prev) => prev + 1)}>+</button>
+          </div>
+          <button
+            className="add"
+            onClick={() =>
+              dispatch(
+                addToCart({
+                  product_id: data.product_id,
+                  name: data.name,
+                  price: data.price,
+                  img: data.image_url,
+                  quantity,
+                })
+              )
+            }
+          >
+            <AddShoppingCartIcon /> ADD TO CART
+          </button>
+          <div className="links">
+            <div className="item">
+              <FavoriteBorderIcon /> ADD TO WISH LIST
             </div>
-            <div className="info">
-              <span>Vendor: Polo</span>
-              <span>Product Type: T-Shirt</span>
-              <span>Tag: T-Shirt, Women, Top</span>
-            </div>
-            <hr />
-            <div className="info">
-              <span>DESCRIPTION</span>
-              <hr />
-              <span>ADDITIONAL INFORMATION</span>
-              <hr />
-              <span>FAQ</span>
+            <div className="item">
+              <BalanceIcon /> ADD TO COMPARE
             </div>
           </div>
-        </> */}
-    </div>
+          <div className="info">
+            <span>Vendor: {data.brand}</span>
+            <span>Tag: {data.category}</span>
+          </div>
+          <hr />
+          <div className="info">
+            <span>DESCRIPTION</span> <span>{data.description}</span>
+          </div>
+        </div>
+      </>
+  </div>
   );
   }
  

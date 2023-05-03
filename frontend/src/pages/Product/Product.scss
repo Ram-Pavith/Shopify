@@ -11,9 +11,10 @@
       flex: 1;
 
       img{
-        width: 100%;
+        width: 120px;
         height: 150px;
         object-fit: cover;
+        overflow: hidden;
         cursor: pointer;
         margin-bottom: 10px;
       }
@@ -22,7 +23,7 @@
       flex: 5;
 
       img{
-        width: 100%;
+        width: 600px;
         max-height: 800px;
         object-fit: cover;
       }

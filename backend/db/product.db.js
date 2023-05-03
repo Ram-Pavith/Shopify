@@ -14,7 +14,7 @@ const getAllProductsDb = async ({ limit, offset }) => {
 
 const createProductDb = async ({ name, price, description, image_url,brand,category,count_in_stock,user_id }) => {
   const { rows: product } = await pool.query(
-    "INSERT INTO products(name, price, description, image_url,brand,category,count_in_stock,created_at,user_id) VALUES($1, $2, $3, $4,$5,$6,$7,now(),$8) returning *",
+    "INSERT INTO products(name, price, description, image_url,brand,category,count_in_stock,created_at,user_id) VALUES($1, $2, $3, $4,$5,$6,$7,now(),$8,$9) returning *",
     [name, price, description, image_url,brand,category,count_in_stock,user_id]
   );
   return product[0];
@@ -45,7 +45,10 @@ const getProductByNameDb = async ( name ) => {
 };
 
 const getProductByCategoryDb = async (category) => {
-  const likeCategory = '%'+category+'%'
+  let likeCategory = '%'+category+'%'
+  if(category==='All'){
+    likeCategory = '%'
+  }
   const {rows:product} = await pool.query(
     `select * from products where category like $1`,
     [likeCategory]

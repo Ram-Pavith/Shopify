@@ -7,27 +7,28 @@ const getAllProducts = async (req, res) => {
         client.get(key, function(err,result){
           if (result===null) {
             // // Set data to Redis
-              
+              console.log("in loop")
+              setCache()
           }else{
             res.status(200).json(JSON.parse(result))
           }
         });
       }
-      else{
+      const setCache = async ()=>{
         const products = await productService.getAllProducts(1);
         client.set(key, JSON.stringify(products),(err,reply)=>{
           if(err){
             res.status(400).json(err)
           }
           else{
-            res.status(200).json(reply)
+            res.status(200).json(products)
           }
         })      
       }
  };
 
 const createProduct = async (req, res) => {
-  const { name, price, description, image_url, city, state, country } = req.body;
+  const { name, price, description, image_url,brand,count_in_stock,category } = req.body;
   const user_id = req.user.user_id
   try{
     const newProduct = await productService.addProduct({
@@ -35,13 +36,14 @@ const createProduct = async (req, res) => {
       price,
       description,
       image_url,
-      city,
-      state,
-      country,
-      user_id
+      brand,
+      count_in_stock,
+      user_id,
+      category
     })
     const key = "products"
     client.del(key)
+    client.del(category)
     res.status(200).json(newProduct);
   }
   catch(err){
@@ -72,8 +74,28 @@ const getProductByName = async (req, res) => {
 
 const getProductByCategory = async (req,res) => {
   try{
-    const product = await productService.getProductByCategory(req.params.category)
-    res.status(200).json(product)
+    const key = req.params.category
+    if(client.get(key)){
+      client.get(key, function(err,result){
+        if (result===null) {
+          // // Set data to Redis
+            setCacheProducts()
+        }else{
+          res.status(200).json(JSON.parse(result))
+        }
+      });
+    }
+    const setCacheProducts= async()=>{
+      const products = await productService.getProductByCategory(key);
+      client.set(key, JSON.stringify(products),(err,reply)=>{
+        if(err){
+          res.status(400).json(err)
+        }
+        else{
+          res.status(200).json(products)
+        }
+      })      
+    }
   }
   catch(err){
     res.status(400).json({message:err.message,stackTrace:err.stack})
