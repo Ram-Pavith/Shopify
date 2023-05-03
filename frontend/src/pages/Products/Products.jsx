@@ -6,7 +6,7 @@ import useFetch from "../../hooks/useFetch";
 import "./Products.scss";
 import {listProductDetails} from '../../actions/productActions.js'
 import axios from 'axios'
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 const Products = () => {
   let category = useParams().category
   const [maxPrice, setMaxPrice] = useState(1000);
@@ -16,7 +16,10 @@ const Products = () => {
   //   'http://localhost:5004/api/products'
   // );
   const dispatch = useDispatch()
-  const {data,isLoading:loading,error} = listProductDetails(category)
+  const productLists = useSelector((state)=>state.productList)
+  const {loading,error,products} = productLists
+  const data = products
+  //const {data,isLoading:loading,error} = listProductDetails(category)
   const handleChange = (e) => {
     const value = e.target.value;
     const isChecked = e.target.checked;

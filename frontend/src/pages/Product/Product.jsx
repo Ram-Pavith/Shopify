@@ -5,8 +5,8 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import BalanceIcon from "@mui/icons-material/Balance";
 import useFetch from "../../hooks/useFetch";
-import { useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useParams, useSearchParams } from "react-router-dom";
+import { useDispatch,useSelector } from "react-redux";
 import { addToCart } from "../../actions/cartActions.js";
 import { listProductDetails } from "../../actions/productActions";
 import axios from 'axios'
@@ -16,17 +16,24 @@ const Product = () => {
   console.log(id)
   const [selectedImg, setSelectedImg] = useState("img");
   const [quantity, setQuantity] = useState(1);
-  const [product,setProduct] = useState({})
-  const [loading,setLoading] = useState(true)
+  // const [product,setProduct] = useState({})
+  // const [loading,setLoading] = useState(true)
   const dispatch = useDispatch();
   //const {data,loading,error} = 
-  const x = async () =>{
-    const { data } = await axios.get(`http://localhost:5000/api/products/${id}`)
-    console.log(data)
-    //setProduct(data)
-    // setLoading(false)
-  }
-  x()
+  // const x = async () =>{
+  //   const { data } = await axios.get(`http://localhost:5000/api/products/${id}`)
+  //   console.log(data)
+  //   //setProduct(data)
+  //   // setLoading(false)
+  // }
+  // x()
+  const productDetails = useSelector((state)=>state.productDetails)
+  //console.log(productDetails)
+  const {product,loading,error} = productDetails
+  const data = product
+  console.log(data)
+  //const loading =true
+
   // const data = product
   //dispatch(listProductDetails(id)).then(data=>console.log(data))//useFetch(`/products/${id}`);
   //console.log(data)
@@ -38,7 +45,7 @@ const Product = () => {
   else{
      return (
     <div className="product">
-        {/* <>
+        <>
           <div className="left">
             <div className="images">
               <img
@@ -52,17 +59,16 @@ const Product = () => {
             <div className="mainImg">
               <img
                 src={
-                  process.env.REACT_APP_UPLOAD_URL +
-                  data?.attributes[selectedImg]?.data?.attributes?.url
+                 data.image_url
                 }
                 alt=""
               />
             </div>
           </div>
           <div className="right">
-            <h1>{data?.attributes?.title}</h1>
-            <span className="price">${data?.attributes?.price}</span>
-            <p>{data?.attributes?.desc}</p>
+            <h1>{data?.name}</h1>
+            <span className="price">${data?.price}</span>
+            {/* <p>{data?.attributes?.desc}</p> */}
             <div className="quantity">
               <button
                 onClick={() =>
@@ -79,11 +85,10 @@ const Product = () => {
               onClick={() =>
                 dispatch(
                   addToCart({
-                    id: data.id,
-                    title: data.attributes.title,
-                    desc: data.attributes.desc,
+                    product_id: data.product_id,
+                    name: data.name,
                     price: data.attributes.price,
-                    img: data.attributes.img.data.attributes.url,
+                    img: data.image_url,
                     quantity,
                   })
                 )
@@ -101,8 +106,7 @@ const Product = () => {
             </div>
             <div className="info">
               <span>Vendor: Polo</span>
-              <span>Product Type: T-Shirt</span>
-              <span>Tag: T-Shirt, Women, Top</span>
+              <span>Tag:</span><span>{data.category}</span>
             </div>
             <hr />
             <div className="info">
@@ -113,7 +117,7 @@ const Product = () => {
               <span>FAQ</span>
             </div>
           </div>
-        </> */}
+        </>
     </div>
   );
   }
