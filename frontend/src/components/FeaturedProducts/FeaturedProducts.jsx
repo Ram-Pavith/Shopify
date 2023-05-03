@@ -8,7 +8,6 @@ import axios from 'axios'
 
 
 const FeaturedProducts = ({ type }) => {
-  console.log(type)
     // const { products, loading, error } = useFetch(
     //   `/api/products/category/${type}`
     // );
@@ -24,14 +23,11 @@ const FeaturedProducts = ({ type }) => {
   const [products,setProducts] = useState([])
   const [isLoading,setIsLoading] = useState(true)
   let api = `http://localhost:5000/api/products/category/${type}`
-  console.log(type)
   useEffect(()=>{
     const fetchProducts = async ()=>{
       const data = await axios.get(api)//.then(data=>setProducts(data.data))
       setProducts(data.data.slice(0,4))
       setIsLoading(false)
-      console.log(products)
-      console.log("from inside async func "+type)
     }
     fetchProducts()
   },[type])
@@ -52,7 +48,7 @@ const FeaturedProducts = ({ type }) => {
         {
            isLoading
           ? <BarLoader/>
-          : products?.map((item) => <Card item={item} key={item.id} />)}
+          : products?.map((item) => <Card item={item} key={item.product_id} />)}
       </div>
     </div>
   );

@@ -31,6 +31,7 @@ app.use("/api", routes);
 app.use(unknownEndpoint);
 app.use(handleError);
 app.use(loggerMiddleware)
+app.use(errorHandler)
 
 app.get("/", (req, res) =>
   res.send("<h1 style='text-align: center'>E-COMMERCE API</h1>")

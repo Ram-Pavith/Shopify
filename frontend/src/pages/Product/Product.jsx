@@ -16,17 +16,17 @@ const Product = () => {
   console.log(id)
   const [selectedImg, setSelectedImg] = useState("img");
   const [quantity, setQuantity] = useState(1);
-  const [product,setProduct] = useState({})
-  const [loading,setLoading] = useState(true)
-  const dispatch = useDispatch();
-  //const {data,loading,error} = 
-  const x = async () =>{
-    const { data } = await axios.get(`http://localhost:5000/api/products/${id}`)
-    console.log(data)
-    //setProduct(data)
-    // setLoading(false)
-  }
-  x()
+  // const [product,setProduct] = useState({})
+  // const [loading,setLoading] = useState(true)
+  const dispatch = useDispatch()
+  const {data,isLoading:loading,error} = listProductDetails()
+  // const x = async () =>{
+  //   const { data } = await axios.get(`http://localhost:5000/api/products/${id}`)
+  //   console.log(data)
+  //   //setProduct(data)
+  //   // setLoading(false)
+  // }
+  //x()
   // const data = product
   //dispatch(listProductDetails(id)).then(data=>console.log(data))//useFetch(`/products/${id}`);
   //console.log(data)

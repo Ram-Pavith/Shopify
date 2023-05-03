@@ -29,6 +29,18 @@ import {
   orderListReducer,
 } from './reducers/orderReducers.js'
 
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
+import storage from "redux-persist/lib/storage";
+
 const reducer = combineReducers({
   productList: productListReducer,
   productDetails: productDetailsReducer,
@@ -52,6 +64,15 @@ const reducer = combineReducers({
   orderListMy: orderListMyReducer,
   orderList: orderListReducer,
 })
+
+
+const persistConfig = {
+  key: "root",
+  version: 1,
+  storage,
+};
+
+const persistor = persistReducer(persistConfig, cartReducer);
 
 const cartItemsFromStorage = localStorage.getItem('cartItems')
   ? JSON.parse(localStorage.getItem('cartItems'))
@@ -81,4 +102,4 @@ const store = createStore(
   composeWithDevTools(applyMiddleware(...middleware))
 )
 
-export default store
+export {persistor, store}
