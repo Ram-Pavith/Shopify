@@ -5,6 +5,11 @@
   "type": "module",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.10.8",
+    "@emotion/styled": "^11.10.8",
+    "@mui/icons-material": "^5.10.15",
+    "@mui/material": "^5.10.15",
+    "@stripe/stripe-js": "^1.44.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -16,14 +21,17 @@
     "react-paypal-button-v2": "^2.6.2",
     "react-redux": "^7.2.1",
     "react-router-bootstrap": "^0.25.0",
-    "react-router-dom": "^5.2.0",
+    "react-router-dom": "^6.11.0",
     "react-scripts": "3.4.3",
     "react-spinners": "^0.13.8",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
+    "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0",
     "sass": "^1.62.1",
-    "uuid": "^9.0.0"
+    "styled-components": "^5.3.10",
+    "uuid": "^9.0.0",
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "dev": "npm run serve",
