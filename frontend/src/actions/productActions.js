@@ -73,6 +73,7 @@ export const listProductDetails = (product_id) => async (dispatch) => {
 
 export const deleteProduct = (id) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: PRODUCT_DELETE_REQUEST,
     })
@@ -83,7 +84,8 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -109,6 +111,7 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
 
 export const createProduct = (product) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: PRODUCT_CREATE_REQUEST,
     })
@@ -119,7 +122,8 @@ export const createProduct = (product) => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -146,6 +150,7 @@ export const createProduct = (product) => async (dispatch, getState) => {
 
 export const updateProduct = (product) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: PRODUCT_UPDATE_REQUEST,
     })
@@ -157,7 +162,8 @@ export const updateProduct = (product) => async (dispatch, getState) => {
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -192,6 +198,7 @@ export const createProductReview = (productId, review) => async (
   getState
 ) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: PRODUCT_CREATE_REVIEW_REQUEST,
     })
@@ -203,7 +210,8 @@ export const createProductReview = (productId, review) => async (
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 

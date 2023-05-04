@@ -8,22 +8,21 @@ const createOrder = async (req, res) => {
 
   const newOrder = await orderService.createOrder({
     cart_id,
-    amount,
     price,
     user_id,
-    payment_method,
-    ref,
+    payment_method:"PAYPAL",
     tax_price:price*0.18,
     shipping_price:10,
     total:price*1.18 + 10
   });
   try{
   // delete all items from cart_items table for the user after order has been processed
-  await cartService.emptyCart(cartId);
+  await cartService.emptyCart(cart_id);
 
   res.status(201).json(newOrder);
   }
   catch(err){
+    console.log(err)
     res.status(400).json({message:err.message,stackTrace:err.stack})
   }
 

@@ -87,7 +87,7 @@ const Register = (history) => {
       <Wrapper>
         <Title>CREATE AN ACCOUNT</Title>
         <Form onSubmit={submitHandler}>
-          <Input placeholder="username" type="text" onChange={(e)=>setName(e.target.value)}/>
+          <Input autoFocus placeholder="username" type="text" onChange={(e)=>setName(e.target.value)}/>
           <Input placeholder="Email" type="email" onChange={(e)=>setEmail(e.target.value)}/>
           <Input placeholder="Password" type="password" onChange={(e)=>setPassword(e.target.value)}/>
           <Input placeholder="Confirm Password" type="password" onChange={(e)=>setConfirmPassword(e.target.value)}/>

@@ -133,6 +133,7 @@ export const register = (name, email, password) => async (dispatch) => {
 
 export const getUserDetails = (id) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: USER_DETAILS_REQUEST,
     })
@@ -143,7 +144,8 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -170,6 +172,7 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
 
 export const updateUserProfile = (user) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: USER_UPDATE_PROFILE_REQUEST,
     })
@@ -181,7 +184,8 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -213,6 +217,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
 
 export const listUsers = () => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: USER_LIST_REQUEST,
     })
@@ -223,7 +228,8 @@ export const listUsers = () => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -250,6 +256,7 @@ export const listUsers = () => async (dispatch, getState) => {
 
 export const deleteUser = (id) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: USER_DELETE_REQUEST,
     })
@@ -260,7 +267,8 @@ export const deleteUser = (id) => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -284,6 +292,7 @@ export const deleteUser = (id) => async (dispatch, getState) => {
 
 export const updateUser = (user) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: USER_UPDATE_REQUEST,
     })
@@ -295,7 +304,8 @@ export const updateUser = (user) => async (dispatch, getState) => {
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 

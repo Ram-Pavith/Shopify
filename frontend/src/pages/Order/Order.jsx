@@ -3,20 +3,20 @@ import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { Row, Col, ListGroup, Image, Card, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import Message from '../components/Message'
-import Loader from '../components/Loader'
+import Message from '../../components/Message/Message.jsx'
+import {BarLoader} from 'react-spinners'
 import {
   getOrderDetails,
   payOrder,
   deliverOrder,
-} from '../actions/orderActions'
+} from '../../actions/orderActions.js'
 import {
   ORDER_PAY_RESET,
   ORDER_DELIVER_RESET,
-} from '../constants/orderConstants'
+} from '../../constants/orderConstants.js'
 
 const OrderScreen = ({ match, history }) => {
-  const orderId = match.params.id
+  const orderId = match.params.order_id
 
   const [sdkReady, setSdkReady] = useState(false)
 
@@ -85,7 +85,7 @@ const OrderScreen = ({ match, history }) => {
   }
 
   return loading ? (
-    <Loader />
+    <BarLoader />
   ) : error ? (
     <Message variant='danger'>{error}</Message>
   ) : (
@@ -196,18 +196,18 @@ const OrderScreen = ({ match, history }) => {
               </ListGroup.Item>
               {!order.isPaid && (
                 <ListGroup.Item>
-                  {loadingPay && <Loader />}
+                  {loadingPay && <BarLoader />}
                   {!sdkReady ? (
-                    <Loader />
+                    <BarLoader />
                   ) : (
-                    <PayPalButton
+                    <Button
                       amount={order.totalPrice}
                       onSuccess={successPaymentHandler}
                     />
                   )}
                 </ListGroup.Item>
               )}
-              {loadingDeliver && <Loader />}
+              {loadingDeliver && <BarLoader />}
               {userInfo &&
                 userInfo.isAdmin &&
                 order.isPaid &&

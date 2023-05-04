@@ -1,31 +1,33 @@
 import pool from "../config/db.js"
+import {v4} from 'uuid'
 
 const createOrderDb = async ({
   cart_id,
-  amount,
   price,
   user_id,
-  ref,
   payment_method,
   shipping_price,
   tax_price,
   total
 }) => {
+  const order_id = v4()
+  console.log(cart_id,price,user_id,payment_method,shipping_price,tax_price,total)
   // create an order
   const { rows: order } = await pool.query(
-    "INSERT INTO orders(user_id, payment_status, price, ref, payment_method,shipping_price,tax_price,total) VALUES($1, 'success', $2, $3, $4, $5,$6,$7,$8,) returning *",
-    [user_id, amount, price, ref, payment_method,tax_price,shipping_price,total]
+    "INSERT INTO orders(user_id, price, payment_method,tax_price,shipping_price,total,order_id, payment_status) VALUES($1, $2, $3, $4, $5,$6,$7,$8) returning *",
+    [user_id,price, payment_method,tax_price,shipping_price,total,order_id,"NOT PAID"]
   );
 
   // copy cart items from the current cart_item table into order_item table
   await pool.query(
     `
-      INSERT INTO order_item(order_id,product_id, quantity)
-      SELECT $1, product_id, quantity from cart_item where cart_id = $2
+      INSERT INTO order_item(order_id,product_id,price,image, quantity)
+      SELECT $1, p.product_id,p.price,p.image_url,cart_item.quantity from cart_item join products as p on p.product_id = cart_item.product_id where cart_id = $2
       returning *
       `,
     [order[0].order_id, cart_id]
   );
+  console.log(order[0])
   return order[0];
 };
 

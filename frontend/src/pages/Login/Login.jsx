@@ -102,6 +102,7 @@ const Login = (history) => {
         <Title>SIGN IN</Title>
         <Form onSubmit={handleClick}>
           <Input
+            autoFocus
             placeholder="email"
             onChange={(e) => setEmail(e.target.value)}
           />
