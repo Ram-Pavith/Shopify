@@ -38,8 +38,8 @@ export const createOrder = (order) => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     }
-
-    const { data } = await axios.post(`/api/orders`, order, config)
+    const orderDetails = {...order,}
+    const { data } = await axios.post(`/api/orders/create`, orderDetails, config)
 
     dispatch({
       type: ORDER_CREATE_SUCCESS,

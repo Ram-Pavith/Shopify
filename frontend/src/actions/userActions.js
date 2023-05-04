@@ -29,6 +29,7 @@ import { ORDER_LIST_MY_RESET } from '../constants/orderConstants.js'
 
 export const login = (email, password) => async (dispatch) => {
   try {
+
     dispatch({
       type: USER_LOGIN_REQUEST,
     })
@@ -51,7 +52,19 @@ export const login = (email, password) => async (dispatch) => {
     })
 
     localStorage.setItem('userInfo', JSON.stringify(data))
-    localStorage.setItem('cart',data.user.cart_id)
+    localStorage.setItem('cart_id',data.user.cart_id)
+    //fetching cart
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
+    const configCart = {
+      headers: {
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
+      },
+    }
+    const Cart = await axios.get('/api/cart',configCart)
+    const dataCart = Cart.data
+
+    localStorage.setItem('cart',JSON.stringify(dataCart))
   } catch (error) {
     dispatch({
       type: USER_LOGIN_FAIL,
@@ -67,6 +80,7 @@ export const logout = () => (dispatch) => {
   localStorage.removeItem('userInfo')
   localStorage.removeItem('cartItems')
   localStorage.removeItem('cart')
+  localStorage.removeItem('cart_id')
   localStorage.removeItem('shippingAddress')
   localStorage.removeItem('paymentMethod')
   dispatch({ type: USER_LOGOUT })

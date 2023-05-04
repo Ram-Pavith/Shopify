@@ -44,15 +44,15 @@ export const getCart =  ()=> async(dispatch, getState)=>{
       authToken:userinfo.token
     },
   }
-  const {data:items} = await axios.get('/api/cart',config)
+  const {data} = await axios.get('/api/cart',config)
   dispatch({
     type:CART_GET,
     payload:{
-      cart:items
+      cart:data
     }
   })
-  console.log(items)
-  localStorage.setItem('cart',JSON.stringify(items))
+  console.log(data)
+  localStorage.setItem('cart',JSON.stringify(data))
 }
 
 export const removeFromCart = (id) => async(dispatch, getState) => {

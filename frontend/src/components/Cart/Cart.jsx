@@ -11,9 +11,6 @@ const Cart = () => {
   const cartId = localStorage.getItem('cart')
   let loading =true
   const dispatch = useDispatch();
-  const getCartItems = useSelector(state=>state.getCartItems)
-  // const items = getCartItems.cartItems
-  let items = useSelector(state=>state.getCartItems)
   let products = JSON.parse(localStorage.getItem('cart')).items
   useEffect(()=>{
     dispatch(getCart())
