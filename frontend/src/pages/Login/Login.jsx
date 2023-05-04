@@ -1,10 +1,10 @@
 import React from 'react'
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-// import { login } from "../../redux/apiCalls";
 import { login } from '../../actions/userActions';
 import { mobile } from "../../responsive";
 import { useDispatch, useSelector } from "react-redux";
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   width: 100vw;
@@ -70,14 +70,15 @@ const Error = styled.span`
   color: red;
 `;
 
-const Login = () => {
+const Login = (history) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const userLogin = useSelector((state) => state.userLogin);
   const { loading,userInfo, error } = userLogin
 
-  const redirect = ""//location.search ? location.search.split('=')[1] : '/'
+  const redirect = "/"//location.search ? location.search.split('=')[1] : '/'
 
   useEffect(() => {
     if (userInfo) {
@@ -91,8 +92,9 @@ const Login = () => {
     console.log(email)
     console.log(password)
     //const{userInfo,loading,error} = dispatch(login(username, password ));
-
+    navigate('/')
     console.log(userInfo)
+
   };
   return (
     <Container>

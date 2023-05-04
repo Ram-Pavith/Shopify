@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
@@ -6,12 +6,26 @@ import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 import { Link } from "react-router-dom";
 import "./Navbar.scss"
 import Cart from "../Cart/Cart";
-import { useSelector } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
+import LogoutIcon from '@mui/icons-material/Logout';
+import { logout } from "../../actions/userActions";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Navbar = () => {
   const [open,setOpen] = useState(false)
+  const dispatch = useDispatch()
   const products = useSelector((state) => state.cart.products);
-
+  const userLogin = useSelector((state) => state.userLogin);
+  const { loading,userInfo, error } = userLogin  // const userLogin = useSelector((state) => state.userLogin)
+  // const { userinfo } = userLogin
+  const logoutHandler = () =>{const message = dispatch(logout())
+    toast.success('Logout Successfull !', {
+      position: toast.POSITION.TOP_RIGHT
+  });
+  }
+  useEffect(()=>{
+  },[userInfo]) 
   return (
     <div className="navbar">
       <div className="wrapper">
@@ -56,8 +70,15 @@ const Navbar = () => {
           </div>
           <div className="icons">
             {/* <FavoriteBorderOutlinedIcon/> */}
-            <Link className="item link" to="/login"><PersonOutlineOutlinedIcon/> LOGIN</Link>
+            {
+              userInfo?(
+                <Link className="item link" onClick={logoutHandler}><LogoutIcon></LogoutIcon> LOGOUT</Link>
+              ):(<>
+              <Link className="item link" to="/login"><PersonOutlineOutlinedIcon/> LOGIN</Link>
             <Link className="item link" to="/register"><PersonAddAltOutlinedIcon/> REGISTER</Link>
+              </>
+              )
+            }
             <div className="cartIcon" onClick={()=>setOpen(!open)}>
               <ShoppingCartOutlinedIcon/>
               {/* <span>{products.length}</span> */}

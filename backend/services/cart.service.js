@@ -30,6 +30,7 @@ class CartService {
     try {
       return await addItemDb(data);
     } catch (error) {
+      console.log(error)
       throw new ErrorHandler(error.statusCode, error.message);
     }
   };

@@ -1,16 +1,27 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import "./Cart.scss";
+import { useDispatch,useSelector } from "react-redux";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import { useSelector } from "react-redux";
-import { addToCart,removeFromCart } from "../../actions/cartActions.js";
-import { useDispatch } from "react-redux";
+import { addToCart,getCart,removeFromCart,emptyCart } from "../../actions/cartActions.js";
 import { makeRequest } from "../../makeRequest";
 import { loadStripe } from "@stripe/stripe-js";
-
+import { useParams } from "react-router";
+import {BarLoader} from "react-spinners"
 const Cart = () => {
-  const products = useSelector((state) => state.cart.products);
+  const cartId = localStorage.getItem('cart')
+  let loading =true
   const dispatch = useDispatch();
-
+  const getCartItems = useSelector(state=>state.getCartItems)
+  // const items = getCartItems.cartItems
+  let items = useSelector(state=>state.getCartItems)
+  let products = JSON.parse(localStorage.getItem('cart')).items
+  useEffect(()=>{
+    dispatch(getCart())
+    loading =false
+    products = JSON.parse(localStorage.getItem('cart'))
+    console.log(products)
+    
+  },[dispatch,loading,cartId]) 
   const totalPrice = () => {
     let total = 0;
     products.forEach((item) => {
@@ -36,35 +47,41 @@ const Cart = () => {
       console.log(err);
     }
   };
-  return (
-    <div className="cart">
-      <h1>Products in your cart</h1>
-      {products?.map((item) => (
-        <div className="item" key={item.id}>
-          <img src={process.env.REACT_APP_UPLOAD_URL + item.img} alt="" />
-          <div className="details">
-            <h1>{item.title}</h1>
-            <p>{item.desc?.substring(0, 100)}</p>
-            <div className="price">
-              {item.quantity} x ${item.price}
+  if(false){
+    return <div className="cart"><BarLoader/></div>
+  }
+  else{
+    return (
+      <div className="cart">
+        <h1>Products in your cart</h1>
+        {products?.map((item) => (
+          <div className="item" key={item.id}>
+            <img src={item.image_url} alt="" />
+            <div className="details">
+              <h1>{item.name}</h1>
+              <p>{item.desc?.substring(0, 100)}</p>
+              <div className="price">
+                {item.quantity} x ${item.price}
+              </div>
             </div>
+            <DeleteOutlinedIcon
+              className="delete"
+              onClick={() => dispatch(removeFromCart(item.id))}
+            />
           </div>
-          <DeleteOutlinedIcon
-            className="delete"
-            onClick={() => dispatch(removeFromCart(item.id))}
-          />
+        ))}
+        <div className="total">
+          <span>SUBTOTAL</span>
+          <span>${totalPrice()}</span>
         </div>
-      ))}
-      <div className="total">
-        <span>SUBTOTAL</span>
-        <span>${totalPrice()}</span>
+        <button onClick={handlePayment}>PROCEED TO CHECKOUT</button>
+        <span className="reset" onClick={() => dispatch(emptyCart())}>
+          Reset Cart
+        </span>
       </div>
-      <button onClick={handlePayment}>PROCEED TO CHECKOUT</button>
-      {/* <span className="reset" onClick={() => dispatch(resetCart())}>
-        Reset Cart
-      </span> */}
-    </div>
-  );
+    );
+  }
+  
 };
 
 export default Cart;

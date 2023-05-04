@@ -76,7 +76,7 @@ const Product = () => {
                   name: data.name,
                   price: data.price,
                   img: data.image_url,
-                  quantity,
+                  qty:quantity,
                 })
               )
             }

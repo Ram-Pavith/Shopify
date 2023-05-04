@@ -10,7 +10,7 @@ import {
   productReviewCreateReducer,
   productByCategoryListReducer,
 } from './reducers/productReducers.js'
-import { cartReducer } from './reducers/cartReducers.js'
+import { cartReducer,getCartReducer,resetCartReducer,addItemToCartReducer } from './reducers/cartReducers.js'
 import {
   userLoginReducer,
   userRegisterReducer,
@@ -50,6 +50,9 @@ const reducer = combineReducers({
   productReviewCreate: productReviewCreateReducer,
   productsByCategory: productByCategoryListReducer,
   cart: cartReducer,
+  getCartItems:getCartReducer,
+  resetCart:resetCartReducer,
+  addItemToCart:addItemToCartReducer,
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   userDetails: userDetailsReducer,
