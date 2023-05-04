@@ -27,8 +27,8 @@ const createOrderDb = async ({
       `,
     [order[0].order_id, cart_id]
   );
-  console.log(order[0])
-  return order[0];
+  console.log(order)
+  return order;
 };
 
 const getAllOrdersDb = async ({ user_id, limit, offset }) => {
@@ -45,6 +45,7 @@ const getAllOrdersDb = async ({ user_id, limit, offset }) => {
 };
 
 const getOrderDb = async ({ order_id, user_id }) => {
+  console.log(order_id,user_id)
   const { rows: order } = await pool.query(
     `SELECT products.*, order_item.quantity 
       from orders 
@@ -55,6 +56,7 @@ const getOrderDb = async ({ order_id, user_id }) => {
       where orders.order_id = $1 AND orders.user_id = $2`,
     [order_id, user_id]
   );
+  console.log(order)
   return order;
 };
 

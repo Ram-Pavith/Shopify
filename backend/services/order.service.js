@@ -33,6 +33,7 @@ class OrderService {
       }
       return order;
     } catch (error) {
+      console.log(error)
       throw new ErrorHandler(error.statusCode, error.message);
     }
   };

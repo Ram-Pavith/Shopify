@@ -43,10 +43,10 @@ const getAllOrders = async (req, res) => {
 };
 
 const getOrder = async (req, res) => {
-  const { order_id } = req.params.order_id;
-  const userId = req.user.user_id;
+  const order_id  = req.params.order_id;
+  const user_id = req.user.user_id;
   try{
-    const order = await orderService.getOrderById({ order_id, userId });
+    const order = await orderService.getOrderById({ order_id, user_id });
     res.status(200).json(order);
   }
   catch(err){

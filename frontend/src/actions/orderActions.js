@@ -52,7 +52,8 @@ export const createOrder = (order) => async (dispatch, getState) => {
     //   type: CART_RESET,
     //   payload: data,
     // })
-    localStorage.setItem('orderItems',data)
+    localStorage.setItem('orderItems',JSON.stringify(data))
+    localStorage.setItem('order_id',data[0].order_id)
     localStorage.removeItem('cartItems')
   } catch (error) {
     const message =

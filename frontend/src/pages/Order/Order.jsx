@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { Row, Col, ListGroup, Image, Card, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../../components/Message/Message.jsx'
@@ -16,14 +16,15 @@ import {
 } from '../../constants/orderConstants.js'
 
 const OrderScreen = ({ match, history }) => {
-  const orderId = match.params.order_id
+  const orderId = useParams().order_id
 
   const [sdkReady, setSdkReady] = useState(false)
 
   const dispatch = useDispatch()
 
   const orderDetails = useSelector((state) => state.orderDetails)
-  const { order, loading, error } = orderDetails
+  let { order, loading, error } = orderDetails
+  order = JSON.parse(localStorage.getItem('orderitems'))
 
   const orderPay = useSelector((state) => state.orderPay)
   const { loading: loadingPay, success: successPay } = orderPay
@@ -39,15 +40,16 @@ const OrderScreen = ({ match, history }) => {
     const addDecimals = (num) => {
       return (Math.round(num * 100) / 100).toFixed(2)
     }
+    console.log(order)
 
-    order.itemsPrice = addDecimals(
-      order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
+    order.price = addDecimals(
+      order.reduce((acc, item) => acc + item.total * item.qty, 0)
     )
   }
 
   useEffect(() => {
     if (!userInfo) {
-      history.push('/login')
+      order = JSON.parse(localStorage.getItem('orderitems'))
     }
 
     const addPayPalScript = async () => {
@@ -62,7 +64,7 @@ const OrderScreen = ({ match, history }) => {
       document.body.appendChild(script)
     }
 
-    if (!order || successPay || successDeliver || order._id !== orderId) {
+    if (!order || successPay || successDeliver || order.order_id !== orderId) {
       dispatch({ type: ORDER_PAY_RESET })
       dispatch({ type: ORDER_DELIVER_RESET })
       dispatch(getOrderDetails(orderId))
@@ -97,21 +99,21 @@ const OrderScreen = ({ match, history }) => {
             <ListGroup.Item>
               <h2>Shipping</h2>
               <p>
-                <strong>Name: </strong> {order.user.name}
+                <strong>Name: </strong> {order.user_id}
               </p>
               <p>
                 <strong>Email: </strong>{' '}
-                <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
+                <a href={`mailto:${order.user_id}`}>{order.user_id}</a>
               </p>
               <p>
                 <strong>Address:</strong>
-                {order.shippingAddress.address}, {order.shippingAddress.city}{' '}
+                {/* {order.shippingAddress.address}, {order.shippingAddress.city}{' '}
                 {order.shippingAddress.postalCode},{' '}
-                {order.shippingAddress.country}
+                {order.shippingAddress.country} */}
               </p>
               {order.isDelivered ? (
                 <Message variant='success'>
-                  Delivered on {order.deliveredAt}
+                  Delivered on {order.delivered_at}
                 </Message>
               ) : (
                 <Message variant='danger'>Not Delivered</Message>
@@ -131,13 +133,14 @@ const OrderScreen = ({ match, history }) => {
               )}
             </ListGroup.Item>
 
-            <ListGroup.Item>
+             <ListGroup.Item>
               <h2>Order Items</h2>
-              {order.orderItems.length === 0 ? (
+              {/* {order.items.length === 0  */}true
+              ? (
                 <Message>Order is empty</Message>
               ) : (
                 <ListGroup variant='flush'>
-                  {order.orderItems.map((item, index) => (
+                  {order.items.map((item, index) => (
                     <ListGroup.Item key={index}>
                       <Row>
                         <Col md={1}>
@@ -160,7 +163,7 @@ const OrderScreen = ({ match, history }) => {
                     </ListGroup.Item>
                   ))}
                 </ListGroup>
-              )}
+              )} 
             </ListGroup.Item>
           </ListGroup>
         </Col>
@@ -179,19 +182,19 @@ const OrderScreen = ({ match, history }) => {
               <ListGroup.Item>
                 <Row>
                   <Col>Shipping</Col>
-                  <Col>${order.shippingPrice}</Col>
+                  <Col>${order.shipping_price}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Tax</Col>
-                  <Col>${order.taxPrice}</Col>
+                  <Col>${order.tax_price}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Total</Col>
-                  <Col>${order.totalPrice}</Col>
+                  <Col>${order.total}</Col>
                 </Row>
               </ListGroup.Item>
               {!order.isPaid && (
@@ -209,9 +212,9 @@ const OrderScreen = ({ match, history }) => {
               )}
               {loadingDeliver && <BarLoader />}
               {userInfo &&
-                userInfo.isAdmin &&
-                order.isPaid &&
-                !order.isDelivered && (
+                userInfo.is_admin &&
+                order.is_paid &&
+                !order.is_delivered && (
                   <ListGroup.Item>
                     <Button
                       type='button'
@@ -220,7 +223,7 @@ const OrderScreen = ({ match, history }) => {
                     >
                       Mark As Delivered
                     </Button>
-                  </ListGroup.Item>
+                </ListGroup.Item>
                 )}
             </ListGroup>
           </Card>
@@ -229,5 +232,4 @@ const OrderScreen = ({ match, history }) => {
     </>
   )
 }
-
 export default OrderScreen
