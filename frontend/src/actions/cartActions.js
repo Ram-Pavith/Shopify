@@ -100,7 +100,9 @@ export const emptyCart = ()=>async (dispatch,getState)=>{
       authToken:userinfo.token
     },
   }
-  const {data:items} = await axios.post('/api/cart/clear',config)
+  console.log(userinfo.token)
+  const {data:items} = await axios.get('/api/cart/clear',config)
+  localStorage.setItem('cart',"{}")
   dispatch({
     type:CART_RESET,
     payload:{

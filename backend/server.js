@@ -37,6 +37,10 @@ app.get("/", (req, res) =>
   res.send("<h1 style='text-align: center'>E-COMMERCE API</h1>")
 );
 
+app.get('/api/config/paypal',(req,res)=>{
+  res.send(process.env.PAYPAL_CLIENT_ID)
+})
+
 app.get('/api/products',(req,res)=>{
   res.json(products)
 })

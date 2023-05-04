@@ -11,14 +11,16 @@ const Cart = () => {
   const cartId = localStorage.getItem('cart')
   let loading =true
   const dispatch = useDispatch();
-  let products = JSON.parse(localStorage.getItem('cart')).items
+  const orderCreateVar = useSelector(state=>state.orderCreate)
+  const order = orderCreateVar
+  let products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart')).items
   useEffect(()=>{
     dispatch(getCart())
     loading =false
-    products = JSON.parse(localStorage.getItem('cart'))
+    products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart'))
     console.log(products)
     
-  },[dispatch,loading,cartId]) 
+  },[dispatch,loading,products,cartId,order]) 
   const totalPrice = () => {
     let total = 0;
     products.forEach((item) => {
@@ -30,22 +32,30 @@ const Cart = () => {
   const stripePromise = loadStripe(
     "pk_test_eOTMlr8usx1ctymXqrik0ls700lQCsX2UB"
   );
-  const handlePayment = async () => {
-    try {
-      const stripe = await stripePromise;
-      const res = await makeRequest.post("/orders", {
-        products,
-      });
-      await stripe.redirectToCheckout({
-        sessionId: res.data.stripeSession.id,
-      });
+  const createOrder = async (body) => {
+    //dispatch(createOrder(body))
+    // try {
+    //   const stripe = await stripePromise;
+    //   const res = await makeRequest.post("/orders", {
+    //     products,
+    //   });
+    //   await stripe.redirectToCheckout({
+    //     sessionId: res.data.stripeSession.id,
+    //   });
 
-    } catch (err) {
-      console.log(err);
+    // } catch (err) {
+    //   console.log(err);
     }
-  };
-  if(false){
+  if(products===null){
     return <div className="cart"><BarLoader/></div>
+  }
+  if(products===""||products===undefined){
+    return <div className="cart">
+      <div className="item">
+        <p>Cart is Empty</p>
+      </div>
+    </div>
+
   }
   else{
     return (
@@ -71,14 +81,16 @@ const Cart = () => {
           <span>SUBTOTAL</span>
           <span>${totalPrice()}</span>
         </div>
-        <button onClick={handlePayment}>PROCEED TO CHECKOUT</button>
+        <button onClick={createOrder({
+
+        })}>PROCEED TO ORDER</button>
         <span className="reset" onClick={() => dispatch(emptyCart())}>
           Reset Cart
         </span>
       </div>
     );
   }
-  
+
 };
 
 export default Cart;

@@ -20,7 +20,7 @@ route
 route.route("/add").post(addItem);
 
 // empty cart
-route.route("/clear").post(emptyCart)
+route.route("/clear").get(emptyCart)
 // delete item from cart
 route.route("/delete").delete(deleteItem);
 
