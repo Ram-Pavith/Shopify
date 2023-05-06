@@ -49,7 +49,7 @@ const router = createBrowserRouter([
         element: <Register/>,
       },
       {
-        path:"/order",
+        path:"/order/:order_id",
         element:<Order/>
       }
 
