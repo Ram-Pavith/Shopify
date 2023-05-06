@@ -6,6 +6,7 @@ import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 import { Link } from "react-router-dom";
 import "./Navbar.scss"
 import Cart from "../Cart/Cart";
+import Search from "../Search/Search.jsx"
 import { useDispatch,useSelector } from "react-redux";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { logout } from "../../actions/userActions";
@@ -14,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {getCart} from "../../actions/cartActions.js"
 const Navbar = () => {
   const [open,setOpen] = useState(false)
+  const [searchOpen,setSearchOpen] = useState(false)
   const dispatch = useDispatch()
   const products = useSelector((state) => state.cart)//products);
   const {cartItems} = products
@@ -30,6 +32,7 @@ const Navbar = () => {
   }
   useEffect(()=>{
     dispatch(getCart())
+    console.log("from navbar bar")
   },[userInfo,cart,dispatch]) 
   return (
     <div className="navbar">
@@ -53,7 +56,7 @@ const Navbar = () => {
           <Link className ="link" to="/">SHOPIFY</Link>
         </div>
         <div className="right">
-          <div className="icons">
+          <div className="searchIcon" onClick={()=>setSearchOpen(!searchOpen)}>
             <SearchIcon/>
           </div>
           <div className="item">
@@ -84,6 +87,8 @@ const Navbar = () => {
         </div>
       </div>
       {open && <Cart/>}
+      {searchOpen && <Search/>}
+
     </div>
   );
 };

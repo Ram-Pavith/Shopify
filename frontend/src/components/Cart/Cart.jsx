@@ -11,7 +11,7 @@ import {createOrder} from "../../actions/orderActions"
 import { Route, Routes, useNavigate } from 'react-router-dom';
 const Cart = () => {
   const cartId = localStorage.getItem('cart')
-  let loading =true
+  // let loading =true
   let totalPriceVar
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -19,7 +19,7 @@ const Cart = () => {
   const orderCreateVar = useSelector(state=>state.orderCreate)
   const order = orderCreateVar
   let cart = useSelector(store => store.cart)
-  let {cartItems} = cart
+  let {loading,error,cartItems} = cart
   let products = cartItems
   //let products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart')).items
   console.log(products)
@@ -44,15 +44,19 @@ const Cart = () => {
   );
   const temp = [products]
   const OrderPage = async () => {
+    if(localStorage.getItem('userInfo')===undefined||localStorage.getItem('userInfo')===null){
+      navigate("/login")
+    }
     console.log("to order")
-    orderDispatch(createOrder({
-      cart_id:localStorage.getItem('cart_id'),
-      price: totalPriceVar,
-      payment_method:'PAYPAL',
-      quantity:temp.length
-  })
- )
+//     orderDispatch(createOrder({
+//       cart_id:localStorage.getItem('cart_id'),
+//       price: totalPriceVar,
+//       payment_method:'PAYPAL',
+//       quantity:temp.length
+//   })
+//  )
  console.log(order)
+ navigate("/order") 
 }
 
    

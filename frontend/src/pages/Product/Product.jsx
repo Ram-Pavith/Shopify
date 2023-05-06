@@ -10,10 +10,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../actions/cartActions.js";
 import { listProductDetails } from "../../actions/productActions";
 import axios from 'axios'
+import {useNavigate } from 'react-router-dom';
 import { BarLoader } from "react-spinners";
 const Product = () => {
   const id = useParams().product_id;
   console.log(id)
+  const navigate = useNavigate();
   const [selectedImg, setSelectedImg] = useState("img");
   const [quantity, setQuantity] = useState(1);
   // const [product,setProduct] = useState({})
@@ -70,7 +72,10 @@ const Product = () => {
           </div>
           <button
             className="add"
-            onClick={() =>
+            onClick={() =>{
+              if(localStorage.getItem('userInfo')===undefined||localStorage.getItem('userInfo')===null){
+                navigate("/login")
+              }
               dispatch(
                 addToCart({
                   product_id: data.product_id,
@@ -80,7 +85,7 @@ const Product = () => {
                   quantity:quantity,
                   count_in_stock:data.count_in_stock
                 })
-              )
+              )}
             }
           >
             <AddShoppingCartIcon /> ADD TO CART
