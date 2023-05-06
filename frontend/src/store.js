@@ -39,8 +39,7 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-import storage from "redux-persist/lib/storage";
-
+import AsyncStorage from '@react-native-async-storage/async-storage'
 const reducer = combineReducers({
   productList: productListReducer,
   productDetails: productDetailsReducer,
@@ -72,7 +71,7 @@ const reducer = combineReducers({
 const persistConfig = {
   key: "root",
   version: 1,
-  storage,
+  storage:AsyncStorage,
 };
 
 const persistor = persistReducer(persistConfig, cartReducer);
