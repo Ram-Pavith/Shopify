@@ -6,34 +6,27 @@ import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 import { Link } from "react-router-dom";
 import "./Navbar.scss"
 import Cart from "../Cart/Cart";
-import Search from "../Search/Search.jsx"
 import { useDispatch,useSelector } from "react-redux";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { logout } from "../../actions/userActions";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {getCart} from "../../actions/cartActions.js"
+
 const Navbar = () => {
   const [open,setOpen] = useState(false)
-  const [searchOpen,setSearchOpen] = useState(false)
   const dispatch = useDispatch()
-  const products = useSelector((state) => state.cart)//products);
-  const {cartItems} = products
-  const cart = cartItems
-  //const products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart')).items
+  // const products = useSelector((state) => state.products);
+  const products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart')).items
   const userLogin = useSelector((state) => state.userLogin);
   const { loading,userInfo, error } = userLogin  // const userLogin = useSelector((state) => state.userLogin)
   // const { userinfo } = userLogin
-  console.log(cart)
   const logoutHandler = () =>{const message = dispatch(logout())
     toast.success('Logout Successfull !', {
       position: toast.POSITION.TOP_RIGHT
   });
   }
   useEffect(()=>{
-    dispatch(getCart())
-    console.log("from navbar bar")
-  },[userInfo,cart,dispatch]) 
+  },[userInfo]) 
   return (
     <div className="navbar">
       <div className="wrapper">
@@ -56,7 +49,7 @@ const Navbar = () => {
           <Link className ="link" to="/">SHOPIFY</Link>
         </div>
         <div className="right">
-          <div className="searchIcon" onClick={()=>setSearchOpen(!searchOpen)}>
+          <div className="icons">
             <SearchIcon/>
           </div>
           <div className="item">
@@ -81,14 +74,12 @@ const Navbar = () => {
             }
             <div className="cartIcon" onClick={()=>setOpen(!open)}>
               <ShoppingCartOutlinedIcon/>
-              <span>{cart!==undefined?cart.length:0}</span>
+              <span>{products!==undefined?products.length:0}</span>
             </div>
           </div>
         </div>
       </div>
       {open && <Cart/>}
-      {searchOpen && <Search/>}
-
     </div>
   );
 };

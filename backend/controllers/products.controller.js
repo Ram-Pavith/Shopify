@@ -2,34 +2,29 @@ import pool from "../config/db.js"
 import productService from "../services/product.service.js"
 import {client,cache} from '../config/redis.js'
 const getAllProducts = async (req, res) => {
-try{
   const key = "products"
-  if(client.get(key)){
-    client.get(key, function(err,result){
-      if (result===null) {
-        // // Set data to Redis
-          console.log("in loop")
-          setCache()
-      }else{
-        res.status(200).json(JSON.parse(result))
+      if(client.get(key)){
+        client.get(key, function(err,result){
+          if (result===null) {
+            // // Set data to Redis
+              console.log("in loop")
+              setCache()
+          }else{
+            res.status(200).json(JSON.parse(result))
+          }
+        });
       }
-    });
-  }
-  const setCache = async ()=>{
-    const products = await productService.getAllProducts(1);
-    client.set(key, JSON.stringify(products),(err,reply)=>{
-      if(err){
-        res.status(400).json({message:err.message,stackTrace:err.stack})
+      const setCache = async ()=>{
+        const products = await productService.getAllProducts(1);
+        client.set(key, JSON.stringify(products),(err,reply)=>{
+          if(err){
+            res.status(400).json(err)
+          }
+          else{
+            res.status(200).json(products)
+          }
+        })      
       }
-      else{
-        res.status(200).json(products)
-      }
-    })      
-  }
-}
-catch(err){
-  res.status(400).json({message:err.message,stackTrace:err.stack})
-}
  };
 
 const createProduct = async (req, res) => {
