@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { login } from '../../actions/userActions';
+import { login,useLogoutTimer,logout } from '../../actions/userActions';
 import { mobile } from "../../responsive";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes, useNavigate } from 'react-router-dom';
@@ -86,9 +86,10 @@ const Login = (location,history) => {
     }
   }, [ history,userInfo, redirect])
 
-  const handleClick = (e) => {
+  const useHandleClick = (e) => {
     e.preventDefault();
     dispatch(login(email, password))
+    // useLogoutTimer(logout)
     console.log(email)
     console.log(password)
     //const{userInfo,loading,error} = dispatch(login(username, password ));
@@ -100,7 +101,7 @@ const Login = (location,history) => {
     <Container>
       <Wrapper>
         <Title>SIGN IN</Title>
-        <Form onSubmit={handleClick}>
+        <Form onSubmit={useHandleClick}>
           <Input
             autoFocus
             placeholder="email"
@@ -111,7 +112,7 @@ const Login = (location,history) => {
             type="password"
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button onClick={handleClick} >{/*disabled={true}> {/*isFetching}>*/}
+          <Button onClick={useHandleClick} >{/*disabled={true}> {/*isFetching}>*/}
             LOGIN
           </Button>
           {/* {error && <Error>Something went wrong...</Error>} */}

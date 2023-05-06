@@ -19,8 +19,8 @@ const Cart = () => {
   const orderCreateVar = useSelector(state=>state.orderCreate)
   const order = orderCreateVar
   let cart = useSelector(store => store.cart)
-  let {loading,error,cartItems} = cart
-  let products = cartItems
+  let {loading,error,items} = cart
+  let products = items
   //let products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart')).items
   console.log(products)
   useEffect(()=>{
@@ -29,7 +29,7 @@ const Cart = () => {
     //products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart'))
     //console.log(products)
     
-  },[orderDispatch,dispatch,loading,products,cartId]) 
+  },[orderDispatch,dispatch,loading,cartId]) 
   const totalPrice = () => {
     let total = 0;
     products.forEach((item) => {
