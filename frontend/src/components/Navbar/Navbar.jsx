@@ -15,7 +15,8 @@ import 'react-toastify/dist/ReactToastify.css';
 const Navbar = () => {
   const [open,setOpen] = useState(false)
   const dispatch = useDispatch()
-  const products = useSelector((state) => state.cart.products);
+  // const products = useSelector((state) => state.products);
+  const products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart')).items
   const userLogin = useSelector((state) => state.userLogin);
   const { loading,userInfo, error } = userLogin  // const userLogin = useSelector((state) => state.userLogin)
   // const { userinfo } = userLogin
@@ -73,7 +74,7 @@ const Navbar = () => {
             }
             <div className="cartIcon" onClick={()=>setOpen(!open)}>
               <ShoppingCartOutlinedIcon/>
-              {/* <span>{products.length}</span> */}
+              <span>{products.length}</span>
             </div>
           </div>
         </div>
