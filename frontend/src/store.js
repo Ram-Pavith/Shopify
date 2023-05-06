@@ -1,5 +1,7 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
+// import { AsyncStorage } from 'react-native'
+import { configureStore } from "@reduxjs/toolkit";
 import { composeWithDevTools } from 'redux-devtools-extension'
 import {
   productListReducer,
@@ -39,6 +41,7 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
+// import AsyncStorage from '@react-native-community/async-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 const reducer = combineReducers({
   productList: productListReducer,
@@ -67,14 +70,13 @@ const reducer = combineReducers({
   orderList: orderListReducer,
 })
 
-
 const persistConfig = {
   key: "root",
   version: 1,
   storage:AsyncStorage,
 };
 
-const persistor = persistReducer(persistConfig, cartReducer);
+const persistor = persistReducer(persistConfig, reducer);
 
 const cartItemsFromStorage = localStorage.getItem('cartItems')
   ? JSON.parse(localStorage.getItem('cartItems'))
@@ -98,10 +100,11 @@ const initialState = {
 
 const middleware = [thunk]
 
-const store = createStore(
-  reducer,
+const store = configureStore({
+  reducer:persistor,
   initialState,
-  composeWithDevTools(applyMiddleware(...middleware))
-)
+  middleware:middleware,
+  //  composeWithDevTools(applyMiddleware(...middleware))
+})
 
 export {persistor, store}
