@@ -44,12 +44,11 @@ const addItemDb = async ({ cart_id, product_id, quantity }) => {
 };
 
 // delete item from cart
-const deleteItemDb = async ({ cart_item_id }) => {
+const deleteItemDb = async ({ cart_item_id, product_id }) => {
   const result = await pool.query(
-    "delete from cart_item where cart_item_id = $1  returning *",
-    [cart_item_id]
+    "delete from cart_item where cart_item_id = $1 AND product_id = $2 returning *",
+    [cart_item_id, product_id]
   );
-  console.log(cart_item_id,product_id,result)
   return result.rows[0];
 };
 

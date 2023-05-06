@@ -1,5 +1,4 @@
 import axios from 'axios'
-import {useEffect} from 'react'
 import {
   USER_DETAILS_FAIL,
   USER_DETAILS_REQUEST,
@@ -54,9 +53,6 @@ export const login = (email, password) => async (dispatch) => {
 
     localStorage.setItem('userInfo', JSON.stringify(data))
     localStorage.setItem('cart_id',data.user.cart_id)
-    const exp = JSON.parse(atob(data.token.split('.')[1]))
-    console.log(exp,exp.user_id,exp.iat,exp.exp,exp.is_admin)
-    localStorage.setItem('expirationTime',exp.exp)
     //fetching cart
     const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     const configCart = {
@@ -69,8 +65,6 @@ export const login = (email, password) => async (dispatch) => {
     const dataCart = Cart.data
 
     localStorage.setItem('cart',JSON.stringify(dataCart))
-    // useLogoutTimer(logout)
-
   } catch (error) {
     dispatch({
       type: USER_LOGIN_FAIL,
@@ -338,25 +332,4 @@ export const updateUser = (user) => async (dispatch, getState) => {
       payload: message,
     })
   }
-}
-
-function isTokenExpired(){
-  const expirationTime = localStorage.getItem("expirationTime")
-  if(!expirationTime)return true;
-  return new Date(expirationTime)<= new Date();
-}
-
-export function useLogoutTimer(logoutFunction){
-
-  useEffect(()=>{
-    if(isTokenExpired()){
-      logoutFunction()
-    }else{
-      const tokenExpiryTime = new Date(localStorage.getItem('expirationTime').getTime() - new Date().getTime())
-      const autoLogoutTimer = setTimeout(logoutFunction,5000)
-
-      //Cleanup timer on unmount
-      return () => clearTimeout(autoLogoutTimer);
-    }
-  },[logoutFunction])
 }
