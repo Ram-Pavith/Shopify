@@ -27,6 +27,7 @@ const Product = () => {
   console.log(product)
   },[dispatch,id])
   const data = product
+  console.log(product)
   if(loading){
     return <BarLoader/>
   }

@@ -19,16 +19,15 @@ export const addToCart = ({product_id, quantity}) => async (dispatch, getState) 
     },
   }
   const { data } = await axios.post(`http://localhost:5000/api/cart/add`,{product_id,quantity:quantity},config)
-  console.log(data,data.data,data.data[0].product_id)
   dispatch({
     type: CART_ADD_ITEM,
     payload: {
-      product_id: data.data[0],product_id,
+      product_id: product_id,
       name: data.data[0].name,
       image_url: data.data[0].image_url,
       price: data.data[0].price,
       count_in_stock: data.data[0].count_in_stock,
-      quantity:data.data[0].qty,
+      quantity:quantity,
     },
   })
 

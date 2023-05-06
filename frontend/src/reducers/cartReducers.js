@@ -18,9 +18,9 @@ export const cartReducer = (
     case CART_ADD_ITEM:
       const item = action.payload
       console.log(item)
-      const existItem = state.cartItems.find((x) => x.product === item.product)
-      state.cartItems = [...state.cartItems,item]
+      const existItem = state.cartItems.find((x) => x.product_id === item.product_id)
       if (existItem) {
+        item.quantity = existItem.quantity + item.quantity
         return {
           ...state,
           cartItems: state.cartItems.map((x) =>
@@ -81,30 +81,5 @@ export const resetCartReducer = (state={cartItems:[...cartItems]},action)=>{
       return {loading:false,items:action.payload}
     default:
       return state
-  }
-}
-
-export const addItemToCartReducer = (state={cartItems:[...cartItems]},action)=>{
-  switch(action.type){
-    case CART_ADD_ITEM:
-      const item = action.payload
-      console.log(item)
-      const existItem = state.cartItems.find((x) => x.product === item.product)
-      state.cartItems = [...state.cartItems,item]
-      if (existItem) {
-        return {
-          ...state,
-          cartItems: state.cartItems.map((x) =>
-            x.product === existItem.product ? item : x
-          ),
-        }
-      } else {
-        return {
-          ...state,
-          cartItems: [...state.cartItems, item],
-        }
-      }
-      default:
-        return {...state,cartItems:[...cartItems,action.payload]}
   }
 }

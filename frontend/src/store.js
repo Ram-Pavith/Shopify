@@ -54,7 +54,6 @@ const reducer = combineReducers({
   cart: cartReducer,
   getCartItems:getCartReducer,
   resetCart:resetCartReducer,
-  addItemToCart:addItemToCartReducer,
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   userDetails: userDetailsReducer,
