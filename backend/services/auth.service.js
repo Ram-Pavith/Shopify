@@ -72,6 +72,7 @@ class AuthService {
             user_id: newUser.user_id,
             username: newUser.username,
             email: newUser.email,
+            cart_id:cart_id
           },
         };
       } else {
@@ -124,7 +125,8 @@ class AuthService {
         user: {
           user_id,
           username,
-          email
+          email,
+          cart_id
         },
       };
     } catch (error) {

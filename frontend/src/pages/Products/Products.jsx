@@ -12,9 +12,6 @@ const Products = () => {
   const [maxPrice, setMaxPrice] = useState(1000);
   const [sort, setSort] = useState(null);
   const [selectedSubCats, setSelectedSubCats] = useState([]);
-  // const { data, loading, error } = useFetch(
-  //   'http://localhost:5004/api/products'
-  // );
   const dispatch = useDispatch()
   const productLists = useSelector((state)=>state.productList)
   const {loading,error,products} = productLists

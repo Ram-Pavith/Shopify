@@ -6,15 +6,20 @@ const client = redis.createClient(REDIS_PORT);
 
 // Cache middleware
 function cache(req, res, key, next) {
-client.get(key, (err, data) => {
-    if (err) throw err;
-    console.log("in cache")
-    if (data !== null) {
-    return data
-    } else {
-    throw new Error('No Cached item with the key')
+    console.log("hello")
+    try{
+        console.log("in try get")
+        client.get(key, function(err,result){
+            if (err) {
+              throw err
+            }
+            return result
+          });
+    }catch(ex){
+        console.log(ex)
+        console.log("redis in catch get")
+        redis.status(400).json("from redis cache catch")
     }
-});
 }
 
 export {client,cache}

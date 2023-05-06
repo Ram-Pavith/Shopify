@@ -1,10 +1,10 @@
 import React from 'react'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
-// import { login } from "../../redux/apiCalls";
 import { login } from '../../actions/userActions';
 import { mobile } from "../../responsive";
 import { useDispatch, useSelector } from "react-redux";
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   width: 100vw;
@@ -70,25 +70,41 @@ const Error = styled.span`
   color: red;
 `;
 
-const Login = () => {
-  const [username, setUsername] = useState("");
+const Login = (history) => {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-//   const { isFetching, error } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const userLogin = useSelector((state) => state.userLogin);
+  const { loading,userInfo, error } = userLogin
+
+  const redirect = "/"//location.search ? location.search.split('=')[1] : '/'
+
+  useEffect(() => {
+    if (userInfo) {
+      //history.push(redirect)
+    }
+  }, [ userInfo, redirect])
+
   const handleClick = (e) => {
     e.preventDefault();
-    console.log(username)
+    dispatch(login(email, password))
+    console.log(email)
     console.log(password)
-    dispatch(login(username, password ));
+    //const{userInfo,loading,error} = dispatch(login(username, password ));
+    navigate('/')
+    console.log(userInfo)
+
   };
   return (
     <Container>
       <Wrapper>
         <Title>SIGN IN</Title>
-        <Form>
+        <Form onSubmit={handleClick}>
           <Input
-            placeholder="username"
-            onChange={(e) => setUsername(e.target.value)}
+            autoFocus
+            placeholder="email"
+            onChange={(e) => setEmail(e.target.value)}
           />
           <Input
             placeholder="password"

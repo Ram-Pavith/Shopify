@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken"
 import { ErrorHandler } from "../helpers/error.js"
 
 const verifyToken = (req, res, next) => {
-  const token = req.header("auth-token");
+  const token = req.header("authToken");
   if (!token) {
     throw new ErrorHandler(401, "Token missing");
   }

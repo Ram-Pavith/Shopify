@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { CART_CLEAR_ITEMS } from '../constants/cartConstants'
+import { CART_RESET } from '../constants/cartConstants.js'
 import {
   ORDER_CREATE_REQUEST,
   ORDER_CREATE_SUCCESS,
@@ -19,11 +19,12 @@ import {
   ORDER_DELIVER_FAIL,
   ORDER_DELIVER_SUCCESS,
   ORDER_DELIVER_REQUEST,
-} from '../constants/orderConstants'
-import { logout } from './userActions'
+} from '../constants/orderConstants.js'
+import { logout } from './userActions.js'
 
 export const createOrder = (order) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: ORDER_CREATE_REQUEST,
     })
@@ -35,20 +36,24 @@ export const createOrder = (order) => async (dispatch, getState) => {
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
-
-    const { data } = await axios.post(`/api/orders`, order, config)
-
+    console.log(order)
+    const x = await axios.post(`/api/orders/create`, {...order}, config)
+    const data = x.data
+    console.log(data)
     dispatch({
       type: ORDER_CREATE_SUCCESS,
-      payload: data,
+      payload: {...data},
     })
-    dispatch({
-      type: CART_CLEAR_ITEMS,
-      payload: data,
-    })
+    // dispatch({
+    //   type: CART_RESET,
+    //   payload: data,
+    // })
+    localStorage.setItem('orderItems',JSON.stringify(data))
+    localStorage.setItem('order_id',data[0].order_id)
     localStorage.removeItem('cartItems')
   } catch (error) {
     const message =
@@ -67,6 +72,7 @@ export const createOrder = (order) => async (dispatch, getState) => {
 
 export const getOrderDetails = (id) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: ORDER_DETAILS_REQUEST,
     })
@@ -77,7 +83,8 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -107,6 +114,7 @@ export const payOrder = (orderId, paymentResult) => async (
   getState
 ) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: ORDER_PAY_REQUEST,
     })
@@ -118,7 +126,8 @@ export const payOrder = (orderId, paymentResult) => async (
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -149,6 +158,7 @@ export const payOrder = (orderId, paymentResult) => async (
 
 export const deliverOrder = (order) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: ORDER_DELIVER_REQUEST,
     })
@@ -159,7 +169,8 @@ export const deliverOrder = (order) => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -190,6 +201,7 @@ export const deliverOrder = (order) => async (dispatch, getState) => {
 
 export const listMyOrders = () => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: ORDER_LIST_MY_REQUEST,
     })
@@ -200,7 +212,8 @@ export const listMyOrders = () => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -227,6 +240,7 @@ export const listMyOrders = () => async (dispatch, getState) => {
 
 export const listOrders = () => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: ORDER_LIST_REQUEST,
     })
@@ -237,7 +251,8 @@ export const listOrders = () => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 

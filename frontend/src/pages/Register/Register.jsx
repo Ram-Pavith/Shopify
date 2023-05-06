@@ -1,6 +1,9 @@
 import React from 'react'
 import styled from "styled-components";
 import { mobile } from "../../responsive";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { register } from '../../actions/userActions';
 
 const Container = styled.div`
   width: 100vw;
@@ -55,23 +58,44 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-const Register = () => {
+const Register = (history) => {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [message, setMessage] = useState(null)
+  const dispatch = useDispatch()
+  const userRegister = useSelector((state) => state.userRegister)
+  const { loading, error, userInfo } = userRegister
+  useEffect(() => {
+    if (userInfo) {
+    }
+  }, [history, userInfo])
+
+  const submitHandler = (e) => {
+    e.preventDefault()
+    if (password !== confirmPassword) {
+      setMessage('Passwords do not match')
+    } else {
+      console.log(email,name,password)
+      dispatch(register(name, email, password))
+    }
+  }
+
   return (
     <Container>
       <Wrapper>
         <Title>CREATE AN ACCOUNT</Title>
-        <Form>
-          <Input placeholder="name" />
-          <Input placeholder="last name" />
-          <Input placeholder="username" />
-          <Input placeholder="email" />
-          <Input placeholder="password" />
-          <Input placeholder="confirm password" />
+        <Form onSubmit={submitHandler}>
+          <Input autoFocus placeholder="username" type="text" onChange={(e)=>setName(e.target.value)}/>
+          <Input placeholder="Email" type="email" onChange={(e)=>setEmail(e.target.value)}/>
+          <Input placeholder="Password" type="password" onChange={(e)=>setPassword(e.target.value)}/>
+          <Input placeholder="Confirm Password" type="password" onChange={(e)=>setConfirmPassword(e.target.value)}/>
           <Agreement>
             By creating an account, I consent to the processing of my personal
             data in accordance with the <b>PRIVACY POLICY</b>
           </Agreement>
-          <Button>CREATE</Button>
+          <Button type="submit">Register</Button>
         </Form>
       </Wrapper>
     </Container>

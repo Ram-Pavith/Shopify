@@ -9,20 +9,26 @@ const getAllUsers = async (req, res) => {
 const createUser = async (req, res) => {
   const { username, password, email,city,state,country } = req.body;
   const hashedPassword = hashPassword(password);
+  try{
+    const user = await userService.createUser({
+      username,
+      password:hashedPassword,
+      email,
+      city,
+      state,
+      country
+    });
+  
+    res.status(201).json({
+      status: "success",
+      user,
+    });
+  }
+  catch(err){
+    res.status(400).json({message:err.message,stackTrace:err.stack})
+  }
 
-  const user = await userService.createUser({
-    username,
-    password:hashedPassword,
-    email,
-    city,
-    state,
-    country
-  });
 
-  res.status(201).json({
-    status: "success",
-    user,
-  });
 };
 
 const getUserById = async (req, res) => {
@@ -40,10 +46,14 @@ const getUserById = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   const { user_id } = req.user;
+  try{
+    const user = await userService.getUserById(user_id);
 
-  const user = await userService.getUserById(user_id);
-
-  return res.status(200).json(user);
+    return res.status(200).json(user);
+  }
+  catch(err){
+    res.status(400).json({message:err.message,stackTrace:err.stack})
+  }
 };
 
 const updateUser = async (req, res) => {

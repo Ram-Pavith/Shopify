@@ -23,7 +23,7 @@ import {
   PRODUCT_CATEGORY_REQUEST,
   PRODUCT_CATEGORY_SUCCESS,
   PRODUCT_CATEGORY_FAIL,
-} from '../constants/productConstants'
+} from '../constants/productConstants.js'
 
 export const productListReducer = (state = { products: [] }, action) => {
   switch (action.type) {
@@ -44,7 +44,7 @@ export const productListReducer = (state = { products: [] }, action) => {
 }
 
 export const productDetailsReducer = (
-  state = { product: [] },
+  state = { product: { reviews: [] } },
   action
 ) => {
   switch (action.type) {
@@ -117,7 +117,7 @@ export const productReviewCreateReducer = (state = {}, action) => {
   }
 }
 
-export const productCategoryReducer = (state = { products: [] }, action) => {
+export const productByCategoryListReducer = (state = { products: [] }, action) => {
   switch (action.type) {
     case PRODUCT_CATEGORY_REQUEST:
       return { loading: true, products: [] }

@@ -3,85 +3,139 @@ import productService from "../services/product.service.js"
 import {client,cache} from '../config/redis.js'
 const getAllProducts = async (req, res) => {
   const key = "products"
-  let responseProducts
-  try{
-    const products = cache(req,res,key,next)
-  }
-  catch{
-    const { page = 1 } = req.query;
-    const products = await productService.getAllProducts(page);
-    responseProducts = products
-    // Set data to Redis
-    client.setex(key, 3600, products,(err,reply)=>{
-      if(err){
-        console.error(err)
+      if(client.get(key)){
+        client.get(key, function(err,result){
+          if (result===null) {
+            // // Set data to Redis
+              console.log("in loop")
+              setCache()
+          }else{
+            res.status(200).json(JSON.parse(result))
+          }
+        });
       }
-      else{
-        console.debug(reply)
+      const setCache = async ()=>{
+        const products = await productService.getAllProducts(1);
+        client.set(key, JSON.stringify(products),(err,reply)=>{
+          if(err){
+            res.status(400).json(err)
+          }
+          else{
+            res.status(200).json(products)
+          }
+        })      
       }
-    });  
-  }
-  finally{
-    res.json(responseProducts);
-  }
-};
+ };
 
 const createProduct = async (req, res) => {
-  const { name, price, description, image_url, city, state, country } = req.body;
-  const newProduct = await productService.createProduct({
-    name,
-    price,
-    description,
-    image_url,
-    city,
-    state,
-    country,
-    shipping_price:10,
-    tax_price:price*0.18,
-    total:price*1.18 + 10
-  })
-  res.status(200).json(newProduct);
+  const { name, price, description, image_url,brand,count_in_stock,category } = req.body;
+  const user_id = req.user.user_id
+  try{
+    const newProduct = await productService.addProduct({
+      name,
+      price,
+      description,
+      image_url,
+      brand,
+      count_in_stock,
+      user_id,
+      category
+    })
+    const key = "products"
+    client.del(key)
+    client.del(category)
+    res.status(200).json(newProduct);
+  }
+  catch(err){
+    res.status(400).json({message:err.message,stackTrace:err.stack})
+  }
+
 };
 
 const getProduct = async (req, res) => {
-  const product = await productService.getProductById(req.params.product_id);
-  res.status(200).json(product);
+  try{
+    const product = await productService.getProductById(req.params.product_id);
+    res.status(200).json(product);
+  }
+  catch(err){
+    res.status(400).json({message:err.message,stackTrace:err.stack})
+  }
 };
 
 const getProductByName = async (req, res) => {
-  const product = await productService.getProductByName(req.params.name);
-  res.status(200).json(product);
+  try{
+    const product = await productService.getProductByName(req.params.name);
+    res.status(200).json(product);
+  }
+  catch(err){
+    res.status(400).json({message:err.message,stackTrace:err.stack})
+  }
 };
 
 const getProductByCategory = async (req,res) => {
-  const product = await productService.getProductByCategory(req.params.category)
-  res.status(200).json(product)
+  try{
+    const key = req.params.category
+    if(client.get(key)){
+      client.get(key, function(err,result){
+        if (result===null) {
+          // // Set data to Redis
+            setCacheProducts()
+        }else{
+          res.status(200).json(JSON.parse(result))
+        }
+      });
+    }
+    const setCacheProducts= async()=>{
+      const products = await productService.getProductByCategory(key);
+      client.set(key, JSON.stringify(products),(err,reply)=>{
+        if(err){
+          res.status(400).json(err)
+        }
+        else{
+          res.status(200).json(products)
+        }
+      })      
+    }
+  }
+  catch(err){
+    res.status(400).json({message:err.message,stackTrace:err.stack})
+  }
 }
 
 const updateProduct = async (req, res) => {
   const { name, price, description, image_url, city, state, country } = req.body;
+  try{
+    const updatedProduct = await productService.updateProduct({
+      name,
+      price,
+      description,
+      image_url,
+      product_id,
+      city,
+      state,
+      country,
+      shipping_price:10,
+      tax_price:price*0.18,
+      total:price*1.18 + 10
+    });
+    res.status(200).json(updatedProduct);
+  }
+  catch(err){
+    res.status(400).json({message:err.message,stackTrace:err.stack})
+  }
   const { product_id } = req.params.product_id;
-
-  const updatedProduct = await productService.updateProduct({
-    name,
-    price,
-    description,
-    image_url,
-    product_id,
-    city,
-    state,
-    country,
-    shipping_price:10,
-    tax_price:price*0.18,
-    total:price*1.18 + 10
-  });
-  res.status(200).json(updatedProduct);
 };
 
 const deleteProduct = async (req, res) => {
   const { product_id } = req.params.product_id;
-  const deletedProduct = productService.removeProduct(product_id);
-  res.status(200).json(deletedProduct);
+  try{
+    const deletedProduct = productService.removeProduct(product_id);
+    res.status(200).json(deletedProduct);
+  }
+  catch(err){
+    res.status(400).json({message:err.message,stackTrace:err.stack})
+  }
+
 };
 
 // TODO create a service for reviews

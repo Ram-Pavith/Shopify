@@ -1,22 +1,33 @@
 import axios from 'axios'
+import {v4} from 'uuid'
 import {
   CART_ADD_ITEM,
   CART_REMOVE_ITEM,
   CART_SAVE_SHIPPING_ADDRESS,
   CART_SAVE_PAYMENT_METHOD,
-} from '../constants/cartConstants'
+  CART_GET,
+  CART_RESET
+} from '../constants/cartConstants.js'
 
-export const addToCart = (id, qty) => async (dispatch, getState) => {
-  const { data } = await axios.get(`/api/products/${id}`)
-
+export const addToCart = ({product_id, qty}) => async (dispatch, getState) => {
+  console.log(product_id,qty)
+  const userinfo = JSON.parse(localStorage.getItem('userInfo'))
+  const config = {
+    headers: {
+      Authorization: `Bearer ${userinfo.token}`,
+      authToken: userinfo.token
+    },
+  }
+  const { data } = await axios.post(`http://localhost:5000/api/cart/add`,{product_id,quantity:qty},config)
+  console.log(data)
   dispatch({
     type: CART_ADD_ITEM,
     payload: {
-      product: data._id,
+      product: data.product_id,
       name: data.name,
       image: data.image,
       price: data.price,
-      countInStock: data.countInStock,
+      countInStock: data.count_in_stock,
       qty,
     },
   })
@@ -24,7 +35,37 @@ export const addToCart = (id, qty) => async (dispatch, getState) => {
   localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems))
 }
 
-export const removeFromCart = (id) => (dispatch, getState) => {
+
+export const getCart =  ()=> async(dispatch, getState)=>{
+  const userinfo = JSON.parse(localStorage.getItem('userInfo'))
+  const config = {
+    headers: {
+      Authorization: `Bearer ${userinfo.token}`,
+      authToken:userinfo.token
+    },
+  }
+  const {data} = await axios.get('/api/cart',config)
+  dispatch({
+    type:CART_GET,
+    payload:{
+      cart:data
+    }
+  })
+  console.log(data)
+  localStorage.setItem('cart',JSON.stringify(data))
+}
+
+export const removeFromCart = (id) => async(dispatch, getState) => {
+  const userinfo = JSON.parse(localStorage.getItem('userInfo'))
+  const config = {
+    headers: {
+      Authorization: `Bearer ${userinfo.token}`,
+      authToken:userinfo.token
+    },
+  }
+  const {data:items} = await axios.delete('/api/cart',config)
+  
+
   dispatch({
     type: CART_REMOVE_ITEM,
     payload: id,
@@ -49,4 +90,23 @@ export const savePaymentMethod = (data) => (dispatch) => {
   })
 
   localStorage.setItem('paymentMethod', JSON.stringify(data))
+}
+
+export const emptyCart = ()=>async (dispatch,getState)=>{
+  const userinfo = JSON.parse(localStorage.getItem('userInfo'))
+  const config = {
+    headers: {
+      Authorization: `Bearer ${userinfo.token}`,
+      authToken:userinfo.token
+    },
+  }
+  console.log(userinfo.token)
+  const {data:items} = await axios.get('/api/cart/clear',config)
+  localStorage.setItem('cart',"{}")
+  dispatch({
+    type:CART_RESET,
+    payload:{
+      cart:items
+    }
+  })
 }
