@@ -6,6 +6,7 @@ import { mobile } from "../../responsive";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
+import {getCart} from '../../actions/cartActions'
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -74,6 +75,9 @@ const Login = (location,history) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const cartDispatch = useDispatch()
+  const cart = useSelector(state=>state.cart)
+  const {cartItems} = cart
   const navigate = useNavigate();
   const userLogin = useSelector((state) => state.userLogin);
   const { loading,userInfo, error } = userLogin
@@ -89,6 +93,7 @@ const Login = (location,history) => {
   const handleClick = (e) => {
     e.preventDefault();
     dispatch(login(email, password))
+    cartDispatch(getCart())
     console.log(email)
     console.log(password)
     //const{userInfo,loading,error} = dispatch(login(username, password ));
