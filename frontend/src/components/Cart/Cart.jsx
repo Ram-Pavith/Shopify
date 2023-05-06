@@ -18,12 +18,16 @@ const Cart = () => {
   const orderDispatch = useDispatch()
   const orderCreateVar = useSelector(state=>state.orderCreate)
   const order = orderCreateVar
-  let products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart')).items
+  let cart = useSelector(store => store.cart)
+  let {cartItems} = cart
+  let products = cartItems
+  //let products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart')).items
+  console.log(products)
   useEffect(()=>{
     dispatch(getCart())
     loading =false
-    products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart'))
-    console.log(products)
+    //products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart'))
+    //console.log(products)
     
   },[orderDispatch,dispatch,loading,products,cartId]) 
   const totalPrice = () => {

@@ -81,6 +81,13 @@ const persistor = persistReducer(persistConfig, reducer);
 const cartItemsFromStorage = localStorage.getItem('cartItems')
   ? JSON.parse(localStorage.getItem('cartItems'))
   : []
+const cartFromStorage = JSON.parse(localStorage.getItem('cart'))
+
+const orderItemsFromStorage = localStorage.getItem('orderItems')
+
+const cartIdFromStorage = localStorage.getItem('cart_id')
+
+const orderIdFromStorage = localStorage.getItem('order_id')
 
 const userInfoFromStorage = localStorage.getItem('userInfo')
   ? JSON.parse(localStorage.getItem('userInfo'))
@@ -92,7 +99,7 @@ const shippingAddressFromStorage = localStorage.getItem('shippingAddress')
 
 const initialState = {
   cart: {
-    cartItems: cartItemsFromStorage,
+    cartItems: cartFromStorage,
     shippingAddress: shippingAddressFromStorage,
   },
   userLogin: { userInfo: userInfoFromStorage },
@@ -100,11 +107,15 @@ const initialState = {
 
 const middleware = [thunk]
 
-const store = configureStore({
+export const store = configureStore({
   reducer:persistor,
   initialState,
   middleware:middleware,
-  //  composeWithDevTools(applyMiddleware(...middleware))
+  devTools:true,
+
+  //composeWithDevTools(applyMiddleware(...middleware))
 })
 
-export {persistor, store}
+// export {persistor, store}
+
+export let persiststore = persistStore(store);

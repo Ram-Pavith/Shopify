@@ -11,36 +11,30 @@ const cartItems= []
 
 
 export const cartReducer = (
-  state = { cartItems:[...cartItems], shippingAddress: {} },
+  state = { cartItems: [], shippingAddress: {} },
   action
 ) => {
   switch (action.type) {
-    // case CART_GET:
-    //   const items = action.payload
-    //   state.cartItems = items
-    // case CART_ADD_ITEM:
-    //   const item = action.payload
-    //   console.log(state.cartItems)
-    //   //const existItem = state.cartItems.find((x) => x.product_id === item.product_id)
-    //   return state.cartItems
-    //   console.log("from cart reducer",state.cartItems)
-    //   // if (existItem) {
-    //   //   console.log("from if",state.cartItems)
-    //   //   return {
-    //   //     ...state,
-    //   //     cartItems: [...state.cartItems,state.cartItems.filter((x) =>
-    //   //       x.product_id !== existItem.product_id 
-    //   //     )],
-
-    //   //   }
-    //   // } else {
-    //   //   console.log("from else",state.cartItems)
-    //   //   return {
-    //   //     ...state,
-    //   //     cartItems: [...state.cartItems, item],
-    //   //   }
-    //   // }
+    case CART_ADD_ITEM:
+      const item = action.payload
+      console.log(item)
+      const existItem = state.cartItems.find((x) => x.product === item.product)
+      state.cartItems = [...state.cartItems,item]
+      if (existItem) {
+        return {
+          ...state,
+          cartItems: state.cartItems.map((x) =>
+            x.product === existItem.product ? item : x
+          ),
+        }
+      } else {
+        return {
+          ...state,
+          cartItems: [...state.cartItems, item],
+        }
+      }
     case CART_REMOVE_ITEM:
+      
       return {
         ...state,
         cartItems: state.cartItems.filter((x) => x.product !== action.payload),
@@ -55,37 +49,62 @@ export const cartReducer = (
         ...state,
         paymentMethod: action.payload,
       }
-
+    case CART_RESET:
+      case CART_RESET:
+      state.cartItems = []
+      return {
+        ...state,
+        cartItems: [],
+      }
     default:
+      console.log(state)
       return state
   }
 }
 
-export const getCartReducer =(state={cartItems},action)=>{
+export const getCartReducer =(state={cartItems : []},action)=>{
   switch(action.type){
     case CART_GET:
+      console.log(cartItems)
       state.cartItems = action.payload
       return { loading: false, items: action.payload }
     default:
-      return state
+      return {...state,cartItems:[...cartItems]}
   }
 
 }
 
-export const resetCartReducer = (state={},action)=>{
+export const resetCartReducer = (state={cartItems:[...cartItems]},action)=>{
   switch(action.type){
     case CART_RESET:
+      state.cartItems = []
       return {loading:false,items:action.payload}
     default:
       return state
   }
 }
 
-export const addItemToCartReducer = (state={},action)=>{
+export const addItemToCartReducer = (state={cartItems:[...cartItems]},action)=>{
   switch(action.type){
     case CART_ADD_ITEM:
-      return {loading:false,items:action.payload}
-    default:
-      return state
+      const item = action.payload
+      console.log(item)
+      const existItem = state.cartItems.find((x) => x.product === item.product)
+      state.cartItems = [...state.cartItems,item]
+      if (existItem) {
+        return {
+          ...state,
+          cartItems: state.cartItems.map((x) =>
+            x.product === existItem.product ? item : x
+          ),
+        }
+      } else {
+        return {
+          ...state,
+          cartItems: [...state.cartItems, item],
+        }
+      }
+      default:
+        return {...state,cartItems:[...cartItems,action.payload]}
   }
 }

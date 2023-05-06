@@ -2,7 +2,6 @@ import path from 'path'
 import express from 'express'
 import dotenv from 'dotenv'
 import colors from 'colors'
-import { notFound, errorHandler } from './middleware/errorMiddleware.js'
 import connectDB from './config/db.js'
 
 import cors from "cors"
@@ -12,7 +11,7 @@ import routes from "./routes/index.js"
 import helmet from "helmet"
 import compression from "compression"
 import unknownEndpoint from "./middleware/unKnownEndpoint.js"
-import { handleError } from "./helpers/error.js"
+import { ErrorHandler,handleError } from "./helpers/error.js"
 import loggerMiddleware from './middleware/loggerMiddleware.js'
 const PORT = process.env.PORT||5004
 
@@ -31,7 +30,7 @@ app.use("/api", routes);
 app.use(unknownEndpoint);
 app.use(handleError);
 app.use(loggerMiddleware)
-app.use(errorHandler)
+// app.use(errorHandler)
 
 app.get("/", (req, res) =>
   res.send("<h1 style='text-align: center'>E-COMMERCE API</h1>")

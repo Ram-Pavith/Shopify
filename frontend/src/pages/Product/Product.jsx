@@ -24,6 +24,7 @@ const Product = () => {
   const dispatch = useDispatch();
  useEffect(()=>{
   dispatch(listProductDetails(id))
+  console.log(product)
   },[dispatch,id])
   const data = product
   if(loading){
@@ -55,7 +56,6 @@ const Product = () => {
         <div className="right">
           <h1>{data?.name}</h1>
           <span className="price">${data?.price}</span>
-          {/* <p>{data?.attributes?.desc}</p> */}
           <div className="quantity">
             <button
               onClick={() =>
@@ -75,8 +75,9 @@ const Product = () => {
                   product_id: data.product_id,
                   name: data.name,
                   price: data.price,
-                  img: data.image_url,
-                  qty:quantity,
+                  image_url: data.image_url,
+                  quantity:quantity,
+                  count_in_stock:data.count_in_stock
                 })
               )
             }
