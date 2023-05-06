@@ -52,7 +52,7 @@ const Navbar = () => {
             <SearchIcon/>
           </div>
           <div className="item">
-            <Link className ="link" to="/">Homepage</Link>
+            <Link className ="link" to="/">Homepage </Link>
           </div>
           <div className="item">
             <Link className ="link" to="/">About</Link>
