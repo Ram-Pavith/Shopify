@@ -10,10 +10,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../actions/cartActions.js";
 import { listProductDetails } from "../../actions/productActions";
 import axios from 'axios'
+import {useNavigate } from 'react-router-dom';
 import { BarLoader } from "react-spinners";
 const Product = () => {
   const id = useParams().product_id;
   console.log(id)
+  const navigate = useNavigate();
   const [selectedImg, setSelectedImg] = useState("img");
   const [quantity, setQuantity] = useState(1);
   // const [product,setProduct] = useState({})
@@ -24,8 +26,10 @@ const Product = () => {
   const dispatch = useDispatch();
  useEffect(()=>{
   dispatch(listProductDetails(id))
+  console.log(product)
   },[dispatch,id])
   const data = product
+  console.log(product)
   if(loading){
     return <BarLoader/>
   }
@@ -55,7 +59,6 @@ const Product = () => {
         <div className="right">
           <h1>{data?.name}</h1>
           <span className="price">${data?.price}</span>
-          {/* <p>{data?.attributes?.desc}</p> */}
           <div className="quantity">
             <button
               onClick={() =>
@@ -69,16 +72,20 @@ const Product = () => {
           </div>
           <button
             className="add"
-            onClick={() =>
+            onClick={() =>{
+              if(localStorage.getItem('userInfo')===undefined||localStorage.getItem('userInfo')===null){
+                navigate("/login")
+              }
               dispatch(
                 addToCart({
                   product_id: data.product_id,
                   name: data.name,
                   price: data.price,
-                  img: data.image_url,
-                  qty:quantity,
+                  image_url: data.image_url,
+                  quantity:quantity,
+                  count_in_stock:data.count_in_stock
                 })
-              )
+              )}
             }
           >
             <AddShoppingCartIcon /> ADD TO CART

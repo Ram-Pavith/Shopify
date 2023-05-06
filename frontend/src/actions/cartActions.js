@@ -9,8 +9,8 @@ import {
   CART_RESET
 } from '../constants/cartConstants.js'
 
-export const addToCart = ({product_id, qty}) => async (dispatch, getState) => {
-  console.log(product_id,qty)
+export const addToCart = ({product_id, quantity}) => async (dispatch, getState) => {
+  console.log(product_id,quantity)
   const userinfo = JSON.parse(localStorage.getItem('userInfo'))
   const config = {
     headers: {
@@ -18,17 +18,16 @@ export const addToCart = ({product_id, qty}) => async (dispatch, getState) => {
       authToken: userinfo.token
     },
   }
-  const { data } = await axios.post(`http://localhost:5000/api/cart/add`,{product_id,quantity:qty},config)
-  console.log(data)
+  const { data } = await axios.post(`http://localhost:5000/api/cart/add`,{product_id,quantity:quantity},config)
   dispatch({
     type: CART_ADD_ITEM,
     payload: {
-      product: data.product_id,
-      name: data.name,
-      image: data.image,
-      price: data.price,
-      countInStock: data.count_in_stock,
-      qty,
+      product_id: product_id,
+      name: data.data[0].name,
+      image_url: data.data[0].image_url,
+      price: data.data[0].price,
+      count_in_stock: data.data[0].count_in_stock,
+      quantity:quantity,
     },
   })
 
