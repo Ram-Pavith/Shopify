@@ -10,6 +10,7 @@ import {
   CART_INCREMENT,
   CART_DECREMENT
 } from '../constants/cartConstants.js'
+import { USER_LOGOUT } from '../constants/userConstants.js'
 const cartItems= []
 
 
@@ -54,7 +55,6 @@ export const cartReducer = (
         ...state,
         cartItems:state.cartItems.map((x)=>x.cart_item_id===action.payload?decrementItem:x)
       }
-
     case CART_REMOVE_ITEM:
       
       return {
@@ -72,11 +72,16 @@ export const cartReducer = (
         paymentMethod: action.payload,
       }
     case CART_RESET:
-      case CART_RESET:
       state.cartItems = []
       return {
         ...state,
         cartItems: [],
+      }
+    case USER_LOGOUT:
+      state.cartItems = []
+      return {
+        ...state,
+        cartItems:[]
       }
     default:
       console.log(state)
