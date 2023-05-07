@@ -67,7 +67,7 @@ export const getCartReducer =(state={cartItems : []},action)=>{
     case CART_GET:
       console.log(cartItems)
       state.cartItems = action.payload
-      return { loading: false, items: action.payload }
+      return { loading: false, cartItems: action.payload.cart.items }
     default:
       return {...state,cartItems:[...cartItems]}
   }
