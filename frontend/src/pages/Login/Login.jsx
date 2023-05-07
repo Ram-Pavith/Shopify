@@ -15,8 +15,8 @@ const Container = styled.div`
     ),
     url("https://images.pexels.com/photos/6984650/pexels-photo-6984650.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")
       center;
-  background-size: cover;
   display: flex;
+  background-size:cover;
   align-items: center;
   justify-content: center;
 `;
@@ -103,11 +103,12 @@ const Login = (location,history) => {
         <Form onSubmit={handleClick}>
           <Input
             autoFocus
-            placeholder="email"
+            placeholder="Email Address"
+            type="email"
             onChange={(e) => setEmail(e.target.value)}
           />
           <Input
-            placeholder="password"
+            placeholder="Password"
             type="password"
             onChange={(e) => setPassword(e.target.value)}
           />

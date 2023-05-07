@@ -171,6 +171,10 @@ const Button = styled.button`
 const Order = () => {
   let cart = useSelector((state) => state.cart);
   cart = cart.cartItems
+  const address = localStorage.getItem('address')
+  const city = localStorage.getItem('city')
+  const state = localStorage.getItem('state')
+  const country = localStorage.getItem('country')
   const [stripeToken, setStripeToken] = useState(null);
   const navigate = useNavigate();
 const cartDispatch = useDispatch();
@@ -241,19 +245,35 @@ const cartDispatch = useDispatch();
           <Summary>
             <SummaryTitle>ORDER SUMMARY</SummaryTitle>
             <SummaryItem>
-              <SummaryItemText>Subtotal</SummaryItemText>
+              <SummaryItemText>Address :</SummaryItemText>
+              <SummaryItemText>{address}</SummaryItemText>
+            </SummaryItem>
+            <SummaryItem>
+              <SummaryItemText>City :</SummaryItemText>
+              <SummaryItemText>{city}</SummaryItemText>
+            </SummaryItem>
+            <SummaryItem>
+              <SummaryItemText>State :</SummaryItemText>
+              <SummaryItemText>{state}</SummaryItemText>
+            </SummaryItem>
+            <SummaryItem>
+              <SummaryItemText>Country :</SummaryItemText>
+              <SummaryItemText>{country}</SummaryItemText>
+            </SummaryItem>
+            <SummaryItem>
+              <SummaryItemText>Subtotal :</SummaryItemText>
               <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
-              <SummaryItemText>Estimated Shipping</SummaryItemText>
+              <SummaryItemText>Estimated Shipping :</SummaryItemText>
               <SummaryItemPrice>$10.00</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
-              <SummaryItemText>Shipping Discount</SummaryItemText>
+              <SummaryItemText>Shipping Discount :</SummaryItemText>
               <SummaryItemPrice>$ -0.00</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem type="total">
-              <SummaryItemText>Total</SummaryItemText>
+              <SummaryItemText>Total :</SummaryItemText>
               <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
             </SummaryItem>
             {/* <StripeCheckout

@@ -13,9 +13,9 @@ const Container = styled.div`
       rgba(255, 255, 255, 0.05),
       rgba(255, 255, 255, 0.25)
     ),
-    url("https://images.pexels.com/photos/6984650/pexels-photo-6984650.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")
+    url("https://images.pexels.com/photos/5025510/pexels-photo-5025510.jpeg?auto=compress&cs=tinysrgb&w=1600")
       center;
-  background-size: cover;
+  background-size: 100vw 200vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -73,8 +73,8 @@ const Error = styled.span`
 const Shipping = (location,history) => {
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
-  const [city, setCity] = useState("");
-  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [country, setCountry] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userLogin = useSelector((state) => state.userLogin);
@@ -90,31 +90,39 @@ const Shipping = (location,history) => {
 
   const handleClick = (e) => {
     e.preventDefault();
-    dispatch(login(email, password))
-    console.log(email)
-    console.log(password)
+    localStorage.setItem('address',address)
+    localStorage.setItem('city',city)
+    localStorage.setItem('state',state)
+    localStorage.setItem('country',country)
     //const{userInfo,loading,error} = dispatch(login(username, password ));
-    navigate('/')
+    navigate('/order')
     console.log(userInfo)
 
   };
   return (
     <Container>
       <Wrapper>
-        <Title>SIGN IN</Title>
+        <Title>SHIPPING DETAILS</Title>
         <Form onSubmit={handleClick}>
           <Input
             autoFocus
-            placeholder="email"
-            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Address"
+            onChange={(e) => setAddress(e.target.value)}
           />
           <Input
-            placeholder="password"
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
+            placeholder="City"
+            onChange={(e) => setCity(e.target.value)}
+          />
+          <Input
+            placeholder="State"
+            onChange={(e) => setState(e.target.value)}
+          />
+          <Input
+            placeholder="Country"
+            onChange={(e) => setCountry(e.target.value)}
           />
           <Button onClick={handleClick} >{/*disabled={true}> {/*isFetching}>*/}
-            LOGIN
+            Proceed To Order
           </Button>
           {/* {error && <Error>Something went wrong...</Error>} */}
           {/* <Link>DO NOT YOU REMEMBER THE PASSWORD?</Link> */}

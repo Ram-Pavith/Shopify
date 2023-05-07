@@ -64,7 +64,7 @@ const Cart = () => {
 //   })
 //  )
  console.log(order)
- navigate("/order") 
+ navigate("/shippingDetails") 
 }
 
    

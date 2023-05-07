@@ -9,7 +9,8 @@ import {BarLoader} from 'react-spinners'
 import { listByCategoryProducts } from "../../actions/productActions";
 const List = ({ subCats, maxPrice, sort, category }) => {
   const getProductsByCategory = useSelector((state) => state.productsByCategory);
-  const { loading,products, error } = getProductsByCategory
+  let { loading,products, error } = getProductsByCategory
+  products = products.filter((item)=>item.price<=maxPrice).sort((a,b)=> sort==='asc'?a.price-b.price:b.price-a.price)
   const dispatch = useDispatch();
  useEffect(()=>{
   dispatch(listByCategoryProducts(category))
