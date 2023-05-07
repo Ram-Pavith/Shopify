@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import axios from 'axios'
 import './Order.scss'
 import {BarLoader} from 'react-spinners'
+import {PayPalScriptProvider,PayPalButtons} from '@paypal/react-paypal-js'
 import {
     ORDER_PAY_RESET,
     ORDER_DELIVER_RESET,
@@ -175,6 +176,8 @@ const Button = styled.button`
 
 const Order = () => {
     const order_id = useParams().order_id
+    console.log(order_id)
+
     const dispatch = useDispatch()
     const [sdkReady,setSdkReady] = useState(false)
     const addDecimals = (num) => {
@@ -183,8 +186,10 @@ const Order = () => {
     let itemsPrice
 
     const orderDetails = useSelector(state=>state.orderDetails)
-    const {loading,error,order} = orderDetails
-
+    let {loading,error,order} = orderDetails
+     //const orderDetails = JSON.parse(localStorage.getItem('orderItems'))
+     //const {order,loading} = orderDetails
+     //let loading = false
     const orderPay = useSelector((state) => state.orderPay)
     const { loading: loadingPay, success: successPay } = orderPay
   
@@ -193,8 +198,10 @@ const Order = () => {
   
     const userLogin = useSelector((state) => state.userLogin)
     let { userInfo } = userLogin
-    userInfo = JSON.parse(localStorage.getItem('userInfo'))
-    userInfo = userInfo.user
+      
+    const x = async()=>await axios.get('/api/config/paypal')
+    //   const {data:clientId} = x()
+    const clientId = "AZouWH9pB7bJGdVFI9osFLnqb_1HagcB8lcHxiGzbrqNHy9X4C7p2PwTnO1k6zx-kP2pq5NZJC6HmKe0"
     // dispatch(getOrderDetails(order_id))
     console.log(orderDetails)
     if(!loading){
@@ -202,38 +209,41 @@ const Order = () => {
             order.reduce((acc,item)=>acc+item.price*item.quantity,0)
         )
     }
-    //dispatch(getOrderDetails(order_id))
+    // dispatch())
+   //dispatch(getOrderDetails(order_id))
+   useEffect(()=>{
+       dispatch(getOrderDetails(order_id))
+   },[order_id])
     console.log(orderDetails)
-    useEffect(()=>{
-        const addPayPalScript = async ()=>{
-            const {data:clientId} = await axios.get('/api/config/paypal')
-            const script = document.createElement('script')
-            script.type = 'text/javascript'
-            script.src = `src="https://www.paypal.com/sdk/js?client-id=${clientId}"`
-            script.async = true
-            script.onload= ()=>{
-                setSdkReady(true)
-            }
-            document.body.appendChild(script)
-        }
-        dispatch(getOrderDetails(order_id))
-        console.log(orderDetails)
-        if (!order || successPay || successDeliver || order.order_id !== order_id) {
-            dispatch({ type: ORDER_PAY_RESET })
-            dispatch({ type: ORDER_DELIVER_RESET })
-            dispatch(getOrderDetails(order_id))
-          } else if (!order.isPaid) {
-            if (!window.paypal) {
-              addPayPalScript()
-            } else {
-              setSdkReady(true)
-            }
-          }
-        console.log(order)
-    })
-    const paymentHandler = ()=>{
+    console.log(order)
+    const paymentHandler = ()=>{}
+    //loading=false
 
-    }
+//     useEffect(()=>{
+//         const addPayPalScript = async () => {
+//       const script = document.createElement('script')
+//       script.type = 'text/javascript'
+//       script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`
+//       script.async = true
+//       script.onload = () => {
+//         setSdkReady(true)
+//       }
+//       document.body.appendChild(script)
+//     }
+
+//     if (!order || successPay || successDeliver || order._id !== order_id) {
+//       dispatch({ type: ORDER_PAY_RESET })
+//       dispatch({ type: ORDER_DELIVER_RESET })
+//     //   dispatch(getOrderDetails(order_id))
+//     } else if (!order.isPaid) {
+//       if (!window.paypal) {
+//         addPayPalScript()
+//       } else {
+//         setSdkReady(true)
+//       }
+//     }
+//   }, [dispatch, order_id, successPay, successDeliver, order])
+
 //   let cart = useSelector((state) => state.cart);
 //   cart = cart.cartItems
 //   const userInfo = JSON.parse(localStorage.getItem('userInfo'))
@@ -322,7 +332,7 @@ else{
             <Bottom>
               <Info>
                 {order.map((product) => (
-                <div className="item" key={product.cart_item_id}>
+                <div className="item" key={product.product_id}>
                   <Product>
                     <ProductDetail>
                       <Image src={product.image_url} />
@@ -381,6 +391,9 @@ else{
                   <SummaryItemPrice>${order[0].total}</SummaryItemPrice>
                 </SummaryItem>
                   <Button type="submit" onClick={paymentHandler}>PAY NOW</Button>
+                  <PayPalScriptProvider options={{"client-id":clientId}}>
+                    <PayPalButtons></PayPalButtons>
+                  </PayPalScriptProvider>
               </Summary>
             </Bottom>
           </Wrapper>

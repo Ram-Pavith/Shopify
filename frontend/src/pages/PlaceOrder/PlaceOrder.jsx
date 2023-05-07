@@ -190,7 +190,7 @@ const PlaceOrder = () => {
   const cartDispatch = useDispatch();
   const orderDispatch = useDispatch()
   const orderCreateVar = useSelector(state=>state.orderCreate)
-  const order = orderCreateVar
+  const {loading,order} = orderCreateVar
   const checkoutHandler = ()=>{
     console.log(localStorage.getItem('cart_id'),user.user_id,priceVar,address,city,state,country,tax_price,shipping_price,totalVar)
     orderDispatch(createOrder({
@@ -208,7 +208,10 @@ const PlaceOrder = () => {
       payment_method:"PAYPAL"
   }))
   console.log(order)
-  navigate(`/order/${localStorage.getItem('order_id')}`)
+  if(!loading){
+    setTimeout(()=>{},1000)
+    navigate(`/order/${localStorage.getItem('order_id')}`)
+  }
   }
   const onToken = (token) => {
     setStripeToken(token);
