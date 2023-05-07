@@ -37,9 +37,9 @@ const addItem = async (req, res) => {
 
 // delete item from cart
 const deleteItem = async (req, res) => {
-  const { product_id,cart_item_id } = req.body;
+  const  cart_item_id  = req.params.cart_item_id;
   try{
-    const data = await cartService.removeItem({ cart_item_id, product_id });
+    const data = await cartService.removeItem({ cart_item_id });
     res.status(200).json(data);
   }
   catch(err){

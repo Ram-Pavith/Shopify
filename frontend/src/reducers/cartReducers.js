@@ -5,7 +5,8 @@ import {
   CART_SAVE_SHIPPING_ADDRESS,
   CART_SAVE_PAYMENT_METHOD,
   CART_GET,
-  CART_RESET
+  CART_RESET,
+  CART_PERSISTED_GET
 } from '../constants/cartConstants.js'
 const cartItems= []
 
@@ -15,7 +16,10 @@ export const cartReducer = (
   action
 ) => {
   switch (action.type) {
-    
+    case CART_PERSISTED_GET:
+      console.log(action.payload,action.payload.cart)
+      state.cartItems = [...action.payload.cart]
+      return { loading: false, cartItems:[...state.cartItems] }
     case CART_ADD_ITEM:
       const item = action.payload
       console.log(item)

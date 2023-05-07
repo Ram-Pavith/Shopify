@@ -2,7 +2,7 @@ import React, { useState,useEffect } from "react";
 import "./Cart.scss";
 import { useDispatch,useSelector } from "react-redux";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import { addToCart,getCart,removeFromCart,emptyCart } from "../../actions/cartActions.js";
+import { addToCart,getCart,persistedGetCart,removeFromCart,emptyCart } from "../../actions/cartActions.js";
 import { makeRequest } from "../../makeRequest";
 import { loadStripe } from "@stripe/stripe-js";
 import { useParams } from "react-router";
@@ -20,18 +20,24 @@ const Cart = () => {
   const order = orderCreateVar
   let cart = useSelector(store => store.cart)
   let {loading,error,cartItems} = cart
+  const userLogin = useSelector((state) => state.userLogin);
+  const { loading:loginLoading,userInfo, error:loginError } = userLogin 
   let products = cartItems
   console.log(products)
   //let products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart')).items
   console.log(products)
   useEffect(()=>{
-    dispatch(getCart())
-    loading =false
+    if(userInfo){
+      dispatch(getCart())
+      //dispatch(persistedGetCart())
+      loading =false
+    }
+    
     console.log("from cart dispatch")
     //products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart'))
     //console.log(products)
     
-  },[orderDispatch,dispatch,loading,products,cartId]) 
+  },[orderDispatch,dispatch,loading,products,cartId,userInfo]) 
   const totalPrice = () => {
     let total = 0;
     products.forEach((item) => {
@@ -79,7 +85,7 @@ const Cart = () => {
       <div className="cart">
         <h1>Products in your cart</h1>
         {products?.map((item) => (
-          <div className="item" key={item.product_id}>
+          <div className="item" key={item.cart_item_id}>
             <img src={item.image_url} alt="" />
             <div className="details">
               <h1>{item.name}</h1>
@@ -90,7 +96,7 @@ const Cart = () => {
             </div>
             <DeleteOutlinedIcon
               className="delete"
-              onClick={() => dispatch(removeFromCart(item.id))}
+              onClick={() => dispatch(removeFromCart(item.cart_item_id))}
             />
           </div>
         ))}

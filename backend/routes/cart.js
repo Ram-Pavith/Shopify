@@ -22,12 +22,12 @@ route.route("/add").post(addItem);
 // empty cart
 route.route("/clear").get(emptyCart)
 // delete item from cart
-route.route("/delete").delete(deleteItem);
+route.route("/delete/:cart_item_id").delete(deleteItem);
 
 // increment item quantity
-route.route("/increment").put(increaseItemQuantity);
+route.route("/increment/:cart_item_id").put(increaseItemQuantity);
 
 // decrement item quantity
-route.route("/decrement").put(decreaseItemQuantity);
+route.route("/decrement/:cart_item_id").put(decreaseItemQuantity);
 
 export default route

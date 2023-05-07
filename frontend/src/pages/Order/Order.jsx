@@ -1,5 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';import { useSelector } from "react-redux";
 import RemoveIcon from '@mui/icons-material/Remove';import styled from "styled-components";
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import Announcement from "../../components/Announcement/Announcement.jsx";
 import { mobile } from "../../responsive.js";
 // import StripeCheckout from "react-stripe-checkout";
@@ -202,6 +203,7 @@ const Order = () => {
         <Bottom>
           <Info>
             {cart.map((product) => (
+            <div className="item" key={product.cart_item_id}>
               <Product>
                 <ProductDetail>
                   <Image src={product.image_url} />
@@ -209,6 +211,7 @@ const Order = () => {
                     <ProductName>
                       <b>Product:</b> {product.name}
                     </ProductName>
+                    <DeleteOutlinedIcon></DeleteOutlinedIcon>
                     {/* <ProductId>
                       <b>ID:</b> {product.product_id}
                     </ProductId> */}
@@ -225,6 +228,8 @@ const Order = () => {
                   </ProductPrice>
                 </PriceDetail>
               </Product>
+            </div>
+
             ))}
             <Hr />
           </Info>

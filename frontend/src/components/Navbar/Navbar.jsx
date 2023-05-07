@@ -12,7 +12,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { logout } from "../../actions/userActions";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {getCart} from "../../actions/cartActions.js"
+import {getCart,persistedGetCart} from "../../actions/cartActions.js"
 const Navbar = () => {
   const [open,setOpen] = useState(false)
   const [searchOpen,setSearchOpen] = useState(false)
@@ -23,7 +23,7 @@ const Navbar = () => {
   //const products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart')).items
   const userLogin = useSelector((state) => state.userLogin);
   const { loading,userInfo, error } = userLogin  // const userLogin = useSelector((state) => state.userLogin)
-  // const { userinfo } = userLogin
+  //const userInfo = JSON.parse(localStorage.getItem('userInfo'))
   console.log(cart)
   const logoutHandler = () =>{const message = dispatch(logout())
     toast.success('Logout Successfull !', {
@@ -31,9 +31,13 @@ const Navbar = () => {
   });
   }
   useEffect(()=>{
-    dispatch(getCart())
-    console.log("from navbar bar")
-  },[userInfo,cart,dispatch]) 
+    if(userInfo){
+      dispatch(getCart())
+      dispatch(persistedGetCart())
+      console.log("from navbar bar")
+    }
+    
+  },[userInfo,dispatch]) 
   return (
     <div className="navbar">
       <div className="wrapper">

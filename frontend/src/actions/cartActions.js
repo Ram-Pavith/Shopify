@@ -6,7 +6,8 @@ import {
   CART_SAVE_SHIPPING_ADDRESS,
   CART_SAVE_PAYMENT_METHOD,
   CART_GET,
-  CART_RESET
+  CART_RESET,
+  CART_PERSISTED_GET
 } from '../constants/cartConstants.js'
 
 export const addToCart = ({product_id, quantity}) => async (dispatch, getState) => {
@@ -27,6 +28,7 @@ export const addToCart = ({product_id, quantity}) => async (dispatch, getState) 
       image_url: data.data[0].image_url,
       price: data.data[0].price,
       count_in_stock: data.data[0].count_in_stock,
+      cart_item_id:data.data[0].cart_item_id,
       quantity:quantity,
     },
   })
@@ -54,6 +56,24 @@ export const getCart =  ()=> async(dispatch, getState)=>{
   localStorage.setItem('cart',JSON.stringify(data))
 }
 
+export const persistedGetCart = () => async(dispatch,getState)=>{
+  const userinfo = JSON.parse(localStorage.getItem('userInfo'))
+  const config = {
+    headers: {
+      Authorization: `Bearer ${userinfo.token}`,
+      authToken:userinfo.token
+    },
+  }
+  const {data} = await axios.get('/api/cart',config)
+  console.log(data.items)
+  dispatch({
+    type:CART_PERSISTED_GET,
+    payload:{
+      cart:data.items
+    }
+  })
+}
+
 export const removeFromCart = (id) => async(dispatch, getState) => {
   const userinfo = JSON.parse(localStorage.getItem('userInfo'))
   const config = {
@@ -62,7 +82,7 @@ export const removeFromCart = (id) => async(dispatch, getState) => {
       authToken:userinfo.token
     },
   }
-  const {data:items} = await axios.delete('/api/cart',config)
+  const {data:items} = await axios.delete(`/api/cart/${id}`,config)
   
 
   dispatch({
