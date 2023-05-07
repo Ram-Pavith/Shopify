@@ -80,13 +80,14 @@ const persistor = persistReducer(persistConfig, reducer);
 const cartItemsFromStorage = localStorage.getItem('cartItems')
   ? JSON.parse(localStorage.getItem('cartItems'))
   : []
-const cartFromStorage = JSON.parse(localStorage.getItem('cart'))
+const cartFromStorage = localStorage.getItem('cart')?JSON.parse(localStorage.getItem('cart')):[]
+console.log("form store",cartFromStorage)
 
-const orderItemsFromStorage = localStorage.getItem('orderItems')
+const orderItemsFromStorage = localStorage.getItem('orderItems')?JSON.parse(localStorage.getItem('orderItems')):[]
 
-const cartIdFromStorage = localStorage.getItem('cart_id')
+const cartIdFromStorage = localStorage.getItem('cart_id')?localStorage.getItem('card_id'):null
 
-const orderIdFromStorage = localStorage.getItem('order_id')
+const orderIdFromStorage = localStorage.getItem('order_id')?localStorage.getItem('order_id'):null
 
 const userInfoFromStorage = localStorage.getItem('userInfo')
   ? JSON.parse(localStorage.getItem('userInfo'))

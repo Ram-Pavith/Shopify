@@ -21,11 +21,13 @@ const Cart = () => {
   let cart = useSelector(store => store.cart)
   let {loading,error,cartItems} = cart
   let products = cartItems
+  console.log(products)
   //let products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart')).items
   console.log(products)
   useEffect(()=>{
     dispatch(getCart())
     loading =false
+    console.log("from cart dispatch")
     //products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart'))
     //console.log(products)
     

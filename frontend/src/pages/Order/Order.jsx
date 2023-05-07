@@ -164,7 +164,8 @@ const Button = styled.button`
 `;
 
 const Order = () => {
-  const cart = useSelector((state) => state.cart);
+  let cart = useSelector((state) => state.cart);
+  cart = cart.cartItems
   const [stripeToken, setStripeToken] = useState(null);
   const navigate = useNavigate();
 
@@ -200,7 +201,7 @@ const Order = () => {
         </Top>
         <Bottom>
           <Info>
-            {cart.cartItems.map((product) => (
+            {cart.map((product) => (
               <Product>
                 <ProductDetail>
                   <Image src={product.image_url} />

@@ -15,6 +15,7 @@ export const cartReducer = (
   action
 ) => {
   switch (action.type) {
+    
     case CART_ADD_ITEM:
       const item = action.payload
       console.log(item)
@@ -65,8 +66,8 @@ export const cartReducer = (
 export const getCartReducer =(state={cartItems : []},action)=>{
   switch(action.type){
     case CART_GET:
-      console.log(cartItems)
-      state.cartItems = action.payload
+      console.log(action.payload)
+      state.cartItems = action.payload.cart.items
       return { loading: false, cartItems: action.payload.cart.items }
     default:
       return {...state,cartItems:[...cartItems]}
