@@ -90,6 +90,8 @@ class ProductService {
       throw new ErrorHandler(error.statusCode, error.message);
     }
   };
+
+  
 }
 
 export default ProductService = new ProductService()

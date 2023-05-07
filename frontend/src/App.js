@@ -10,6 +10,7 @@ import Products from "./pages/Products/Products.jsx";
 import "./app.scss"
 import Login from "./pages/Login/Login.jsx";
 import Register from "./pages/Register/Register.jsx";
+import PlaceOrder from "./pages/PlaceOrder/PlaceOrder.jsx"
 import Order from "./pages/Order/Order.jsx"
 import Shipping from './pages/Shipping/Shipping.jsx';
 //import { Container } from 'react-bootstrap';
@@ -54,7 +55,11 @@ const router = createBrowserRouter([
         element:<Shipping/>
       },
       {
-        path:"/order",
+        path:"/placeOrder",
+        element:<PlaceOrder/>
+      },
+      {
+        path:"/order/:order_id",
         element:<Order/>
       }
 

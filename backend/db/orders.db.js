@@ -7,6 +7,10 @@ const createOrderDb = async ({
   user_id,
   payment_method,
   shipping_price,
+  address,
+  city,
+  state,
+  country,
   tax_price,
   total
 }) => {
@@ -14,8 +18,8 @@ const createOrderDb = async ({
   console.log(cart_id,price,user_id,payment_method,shipping_price,tax_price,total)
   // create an order
   const { rows: order } = await pool.query(
-    "INSERT INTO orders(user_id, price, payment_method,tax_price,shipping_price,total,order_id, payment_status) VALUES($1, $2, $3, $4, $5,$6,$7,$8) returning *",
-    [user_id,price, payment_method,tax_price,shipping_price,total,order_id,"NOT PAID"]
+    "INSERT INTO orders(user_id, price, payment_method,tax_price,shipping_price,total,order_id, payment_status,address,city,state,country) VALUES($1, $2, $3, $4, $5,$6,$7,$8,$9,$10,$11,$12) returning *",
+    [user_id,price, payment_method,tax_price,shipping_price,total,order_id,"NOT PAID",address,city,state,country]
   );
 
   // copy cart items from the current cart_item table into order_item table
@@ -47,7 +51,7 @@ const getAllOrdersDb = async ({ user_id, limit, offset }) => {
 const getOrderDb = async ({ order_id, user_id }) => {
   console.log(order_id,user_id)
   const { rows: order } = await pool.query(
-    `SELECT products.*, order_item.quantity 
+    `SELECT orders.*,products.*, order_item.quantity,order_item.order_item_id as order_item_id 
       from orders 
       join order_item
       on order_item.order_id = orders.order_id
@@ -60,8 +64,30 @@ const getOrderDb = async ({ order_id, user_id }) => {
   return order;
 };
 
+const payOrderDb = async ({order_id,payment_status})=>{
+  const {rowCount} = await pool.query(
+    `UPDATE orders SET payment_status = $2 where order_id=$1;`,
+    [order_id,payment_status]
+  )
+  console.log(rowCount)
+  console.log(order_id,payment_status)
+  return rowCount;
+}
+
+const deliverOrderDb = async ({order_id})=>{
+  const {rowCount} = await pool.query(
+    `UPDATE orders SET delivered_at = now(),is_delivered=true where order_id=$1;`,
+    [order_id,payment_status]
+  )
+  console.log(rowCount)
+  console.log(order_id,payment_status)
+  return rowCount;
+}
+
 export {
   createOrderDb,
   getAllOrdersDb,
   getOrderDb,
+  payOrderDb,
+  deliverOrderDb
 };

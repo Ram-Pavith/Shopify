@@ -28,7 +28,7 @@ const Search = ()=>{
         if(true){
             dispatch(listProductDetailsByName(searchString))
             console.log(product)
-            navigate(`product/${product.product_id}`)
+            //navigate(`product/${product.product_id}`)
         }
     }
     return(
