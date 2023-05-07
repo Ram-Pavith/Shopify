@@ -7,7 +7,9 @@ import {
   CART_SAVE_PAYMENT_METHOD,
   CART_GET,
   CART_RESET,
-  CART_PERSISTED_GET
+  CART_PERSISTED_GET,
+  CART_INCREMENT,
+  CART_DECREMENT
 } from '../constants/cartConstants.js'
 
 export const addToCart = ({product_id, quantity}) => async (dispatch, getState) => {
@@ -82,7 +84,7 @@ export const removeFromCart = (id) => async(dispatch, getState) => {
       authToken:userinfo.token
     },
   }
-  const {data:items} = await axios.delete(`/api/cart/${id}`,config)
+  const {data:items} = await axios.delete(`/api/cart/delete/${id}`,config)
   
 
   dispatch({
@@ -91,6 +93,41 @@ export const removeFromCart = (id) => async(dispatch, getState) => {
   })
 
   localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems))
+}
+export const incrementQuantityCart = (id) => async(dispatch, getState) => {
+  const userinfo = JSON.parse(localStorage.getItem('userInfo'))
+  const config = {
+    headers: {
+      Authorization: `Bearer ${userinfo.token}`,
+      authToken:userinfo.token
+    },
+  }
+  const {data:items} = await axios.put(`/api/cart/increment/${id}`,{},config)
+  
+
+  dispatch({
+    type: CART_INCREMENT,
+    payload: id,
+  })
+
+}
+
+export const decrementQuantityCart = (id) => async(dispatch, getState) => {
+  const userinfo = JSON.parse(localStorage.getItem('userInfo'))
+  const config = {
+    headers: {
+      Authorization: `Bearer ${userinfo.token}`,
+      authToken:userinfo.token
+    },
+  }
+  const {data:items} = await axios.put(`/api/cart/decrement/${id}`,{},config)
+  
+
+  dispatch({
+    type: CART_DECREMENT,
+    payload: id,
+  })
+
 }
 
 export const saveShippingAddress = (data) => (dispatch) => {

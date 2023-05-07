@@ -14,8 +14,9 @@ const route = router.Router()
 
 route.use(verifyToken);
 // get cart items
-route
-.route("/").get(getCart).post(createCart)
+route.route("/")
+.get(getCart)
+.post(createCart)
 // add item to cart
 route.route("/add").post(addItem);
 

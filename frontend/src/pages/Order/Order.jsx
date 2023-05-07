@@ -1,12 +1,16 @@
-import AddIcon from '@mui/icons-material/Add';import { useSelector } from "react-redux";
-import RemoveIcon from '@mui/icons-material/Remove';import styled from "styled-components";
+import AddIcon from '@mui/icons-material/Add';
+import { useDispatch,useSelector } from "react-redux";
+import RemoveIcon from '@mui/icons-material/Remove';
+import styled from "styled-components";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import Announcement from "../../components/Announcement/Announcement.jsx";
 import { mobile } from "../../responsive.js";
+import {removeFromCart,incrementQuantityCart,decrementQuantityCart} from '../../actions/cartActions.js'
 // import StripeCheckout from "react-stripe-checkout";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import './Order.scss'
 const KEY = process.env.REACT_APP_STRIPE;
 
 const Container = styled.div``;
@@ -169,7 +173,7 @@ const Order = () => {
   cart = cart.cartItems
   const [stripeToken, setStripeToken] = useState(null);
   const navigate = useNavigate();
-
+const cartDispatch = useDispatch();
   const onToken = (token) => {
     setStripeToken(token);
   };
@@ -211,7 +215,8 @@ const Order = () => {
                     <ProductName>
                       <b>Product:</b> {product.name}
                     </ProductName>
-                    <DeleteOutlinedIcon></DeleteOutlinedIcon>
+                    <DeleteOutlinedIcon className="delete" 
+                    onClick={() => cartDispatch(removeFromCart(product.cart_item_id))}></DeleteOutlinedIcon>
                     {/* <ProductId>
                       <b>ID:</b> {product.product_id}
                     </ProductId> */}
@@ -219,12 +224,12 @@ const Order = () => {
                 </ProductDetail>
                 <PriceDetail>
                   <ProductAmountContainer>
-                    <AddIcon />
+                    <AddIcon className='increment' onClick={()=>cartDispatch(incrementQuantityCart(product.cart_item_id))}/>
                     <ProductAmount>{product.quantity}</ProductAmount>
-                    <RemoveIcon />
+                    <RemoveIcon className='decrement' onClick={()=>cartDispatch(decrementQuantityCart(product.cart_item_id))}/>
                   </ProductAmountContainer>
                   <ProductPrice>
-                    $ {product.price * product.quantity}
+                    ${product.price} * {product.quantity} =   ${product.price * product.quantity}
                   </ProductPrice>
                 </PriceDetail>
               </Product>

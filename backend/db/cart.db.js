@@ -53,10 +53,10 @@ const deleteItemDb = async ({ cart_item_id }) => {
 };
 
 // increment item quantity by 1
-const increaseItemQuantityDb = async ({ cart_item_id, product_id }) => {
+const increaseItemQuantityDb = async ({ cart_item_id }) => {
   await pool.query(
-    "update cart_item set quantity = quantity + 1 where cart_item.cart_item_id = $1 and cart_item.product_id = $2",
-    [cart_item_id, product_id]
+    "update cart_item set quantity = quantity + 1 where cart_item.cart_item_id = $1 ",
+    [cart_item_id]
   );
 
   const results = await pool.query(
@@ -72,10 +72,10 @@ const increaseItemQuantityDb = async ({ cart_item_id, product_id }) => {
 };
 
 // decrement item quantity by 1
-const decreaseItemQuantityDb = async ({ cart_item_id, product_id }) => {
+const decreaseItemQuantityDb = async ({ cart_item_id }) => {
   await pool.query(
-    "update cart_item set quantity = quantity - 1 where cart_item.cart_item_id = $1 AND cart_item.product_id = $2 returning *",
-    [cart_item_id, product_id]
+    "update cart_item set quantity = quantity - 1 where cart_item.cart_item_id = $1  returning *",
+    [cart_item_id]
   );
 
   const results = await pool.query(

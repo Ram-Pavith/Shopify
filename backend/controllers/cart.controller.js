@@ -50,10 +50,9 @@ const deleteItem = async (req, res) => {
 
 // increment item quantity by 1
 const increaseItemQuantity = async (req, res) => {
-  const { product_id } = req.body;
-  const cart_id = req.user.cart_id;
+  const cart_item_id  = req.params.cart_item_id;
   try{
-    const cart = await cartService.increaseQuantity({ cart_id, product_id });
+    const cart = await cartService.increaseQuantity({ cart_item_id });
     res.status(200).json(cart);
   }
   catch(err){
@@ -64,10 +63,9 @@ const increaseItemQuantity = async (req, res) => {
 
 // decrement item quantity by 1
 const decreaseItemQuantity = async (req, res) => {
-  const { product_id } = req.body;
-  const cart_id = req.user.cart_id;
+  const  cart_item_id  = req.params.cart_item_id;
   try{
-    const cart = await cartService.decreaseQuantity({ cart_id, product_id });
+    const cart = await cartService.decreaseQuantity({ cart_item_id });
     res.status(200).json(cart);
   }
   catch(err){

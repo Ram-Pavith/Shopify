@@ -6,7 +6,9 @@ import {
   CART_SAVE_PAYMENT_METHOD,
   CART_GET,
   CART_RESET,
-  CART_PERSISTED_GET
+  CART_PERSISTED_GET,
+  CART_INCREMENT,
+  CART_DECREMENT
 } from '../constants/cartConstants.js'
 const cartItems= []
 
@@ -38,11 +40,26 @@ export const cartReducer = (
           cartItems: [...state.cartItems, item],
         }
       }
+    case CART_INCREMENT:
+      const incrementItem = state.cartItems.find((x)=>x.cart_item_id===action.payload)
+      incrementItem.quantity+=1
+      return{
+        ...state,
+        cartItems: state.cartItems.map((x)=>x.cart_item_id===action.payload?incrementItem:x)
+      }
+    case CART_DECREMENT:
+      const decrementItem = state.cartItems.find((x)=>x.cart_item_id===action.payload)
+      decrementItem.quantity-=1
+      return{
+        ...state,
+        cartItems:state.cartItems.map((x)=>x.cart_item_id===action.payload?decrementItem:x)
+      }
+
     case CART_REMOVE_ITEM:
       
       return {
         ...state,
-        cartItems: state.cartItems.filter((x) => x.product !== action.payload),
+        cartItems: state.cartItems.filter((x) => x.cart_item_id !== action.payload),
       }
     case CART_SAVE_SHIPPING_ADDRESS:
       return {
