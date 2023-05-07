@@ -171,6 +171,11 @@ const Button = styled.button`
 const Order = () => {
   let cart = useSelector((state) => state.cart);
   cart = cart.cartItems
+  let priceVar
+  let totalVar
+  let tax_price = 0.18
+  let shipping_price = 10.00 
+  let shipping_discount = 0.00
   const address = localStorage.getItem('address')
   const city = localStorage.getItem('city')
   const state = localStorage.getItem('state')
@@ -181,10 +186,22 @@ const cartDispatch = useDispatch();
   const onToken = (token) => {
     setStripeToken(token);
   };
-
+  const totalPrice = () => {
+    let total = 0;
+    cart.forEach((item) => {
+      total += item.quantity * item.price;
+    });
+    priceVar = total.toFixed(2)
+    totalVar = priceVar*(1.00 + tax_price) + shipping_price - shipping_discount
+    if(totalVar>(shipping_price+5000)){totalVar-=shipping_price;shipping_discount=shipping_price}
+    totalVar = totalVar.toFixed(2)
+    return total.toFixed(2);
+  };
+  totalPrice()
   useEffect(() => {
     const makeRequest = async () => {
       try {
+        totalPrice()
         // const res = await userRequest.post("/checkout/payment", {
         //   tokenId: stripeToken.id,
         //   amount: 500,
@@ -262,19 +279,23 @@ const cartDispatch = useDispatch();
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Subtotal :</SummaryItemText>
-              <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
+              <SummaryItemPrice>$ {priceVar}</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Estimated Shipping :</SummaryItemText>
-              <SummaryItemPrice>$10.00</SummaryItemPrice>
+              <SummaryItemPrice>${shipping_price}</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Shipping Discount :</SummaryItemText>
-              <SummaryItemPrice>$ -0.00</SummaryItemPrice>
+              <SummaryItemPrice>- ${shipping_discount}</SummaryItemPrice>
+            </SummaryItem>
+            <SummaryItem>
+              <SummaryItemText>Tax Rate ({tax_price}) :</SummaryItemText>
+              <SummaryItemPrice>({tax_price} * {priceVar}) {(tax_price*priceVar).toFixed(2)}</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem type="total">
               <SummaryItemText>Total :</SummaryItemText>
-              <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
+              <SummaryItemPrice>${totalVar}</SummaryItemPrice>
             </SummaryItem>
             {/* <StripeCheckout
               name="Lama Shop"

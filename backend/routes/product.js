@@ -24,13 +24,15 @@ route
 route
   .route("/:product_id")
   .get(getProduct)
-  .get(getProductByName)
   .put(verifyToken, verifyAdmin, updateProduct)
   .delete(verifyToken, verifyAdmin, deleteProduct);
 
 route
   .route("/category/:category")
   .get(getProductByCategory)
+route
+  .route("/search/:name")
+  .get(getProductByName)
 
 route
   .route("/:product_id/reviews")

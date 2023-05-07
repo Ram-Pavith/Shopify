@@ -6,6 +6,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import {
   productListReducer,
   productDetailsReducer,
+  productDetailsByNameReducer,
   productDeleteReducer,
   productCreateReducer,
   productUpdateReducer,
@@ -46,6 +47,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 const reducer = combineReducers({
   productList: productListReducer,
   productDetails: productDetailsReducer,
+  productDetailsByName: productDetailsByNameReducer,
   productDelete: productDeleteReducer,
   productCreate: productCreateReducer,
   productUpdate: productUpdateReducer,
