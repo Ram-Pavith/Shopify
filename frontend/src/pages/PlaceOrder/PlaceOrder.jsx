@@ -208,8 +208,8 @@ const PlaceOrder = () => {
       payment_method:"PAYPAL"
   }))
   console.log(order)
-  if(!loading){
-    setTimeout(()=>{},1000)
+  if(order){
+    console.log("inside loop")
     navigate(`/order/${localStorage.getItem('order_id')}`)
   }
   }

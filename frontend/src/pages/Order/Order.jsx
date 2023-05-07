@@ -6,7 +6,7 @@ import CheckoutSteps from "../../components/CheckoutSteps/CheckoutSteps.jsx"
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useParams } from "react-router-dom";
-import { getOrderDetails } from '../../actions/orderActions.js';
+import { getOrderDetails,payOrder,deliverOrder } from '../../actions/orderActions.js';
 import { Link } from "react-router-dom";
 import axios from 'axios'
 import './Order.scss'
@@ -185,11 +185,11 @@ const Order = () => {
       }
     let itemsPrice
 
-    const orderDetails = useSelector(state=>state.orderDetails)
-    let {loading,error,order} = orderDetails
-     //const orderDetails = JSON.parse(localStorage.getItem('orderItems'))
-     //const {order,loading} = orderDetails
-     //let loading = false
+    //const orderDetails = useSelector(state=>state.orderDetails)
+    //let {loading,error,order} = orderDetails
+     const orderDetails = JSON.parse(localStorage.getItem('orderItems'))
+     const order = orderDetails
+     let loading = false
     const orderPay = useSelector((state) => state.orderPay)
     const { loading: loadingPay, success: successPay } = orderPay
   
@@ -216,7 +216,11 @@ const Order = () => {
    },[order_id])
     console.log(orderDetails)
     console.log(order)
-    const paymentHandler = ()=>{}
+    const paymentHandler = (status)=>{   
+        console.log(status)
+        localStorage.setItem('payment_status',status) 
+        dispatch(payOrder(order[0].order_id,status))
+    }
     //loading=false
 
 //     useEffect(()=>{
@@ -234,7 +238,7 @@ const Order = () => {
 //     if (!order || successPay || successDeliver || order._id !== order_id) {
 //       dispatch({ type: ORDER_PAY_RESET })
 //       dispatch({ type: ORDER_DELIVER_RESET })
-//     //   dispatch(getOrderDetails(order_id))
+//       dispatch(getOrderDetails(order_id))
 //     } else if (!order.isPaid) {
 //       if (!window.paypal) {
 //         addPayPalScript()
@@ -392,7 +396,39 @@ else{
                 </SummaryItem>
                   <Button type="submit" onClick={paymentHandler}>PAY NOW</Button>
                   <PayPalScriptProvider options={{"client-id":clientId}}>
-                    <PayPalButtons></PayPalButtons>
+                    <PayPalButtons style={{
+                        color:"silver",
+                        layout:"horizontal",
+                        height:48,
+                        tagline:false,
+                    }}
+                    onClick={(data,actions)=>{
+                        return actions.resolve()
+                    }}
+                    createOrder={(data,actions)=>{
+                        return actions.order.create({
+                            purchase_units:[
+                                {
+                                    description:order.description,
+                                    amount:{
+                                        value:order[0].total
+                                    }
+                                }
+                            ]
+                        });
+                    }}
+                    onApprove={async (data,actions)=>{
+                        const neworder = await actions.order.capture();
+                        console.log("order",neworder)
+                        localStorage.setItem('payment_status',neworder.status)
+                        dispatch(payOrder(JSON.stringify(neworder.status)))
+                        paymentHandler(neworder.status)
+                    }}
+                    onError={(err)=>{
+                        console.log("PayPal checkout error",err)
+                        paymentHandler(err)
+                    }}
+                    ></PayPalButtons>
                   </PayPalScriptProvider>
               </Summary>
             </Bottom>
