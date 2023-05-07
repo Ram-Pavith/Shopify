@@ -65,7 +65,7 @@ export const getCartReducer =(state={cartItems},action)=>{
   switch(action.type){
     case CART_GET:
       state.cartItems = action.payload
-      return { loading: false, items: action.payload }
+      return { loading: false, cartItems: action.payload }
     default:
       return state
   }
