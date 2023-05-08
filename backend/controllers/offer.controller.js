@@ -11,6 +11,18 @@ const applyOffer = async(req,res)=>{
     }
 }
 
+const applyOfferCart = async(req,res)=>{
+    try{
+        const cart_id = req.params.cart_id
+        const offersApplied = await offerService.offerApplyCart({...req.body,cart_id})
+        console.log("from controller ",offersApplied)
+        res.status(200).json(offersApplied)
+    }catch(err){
+        res.status(400).json({message:err.message,stackTrace:err.stack})
+    }
+}
+
 export {
-    applyOffer
+    applyOffer,
+    applyOfferCart
 }

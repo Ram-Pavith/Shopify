@@ -231,7 +231,7 @@ const Order = () => {
         console.log(status)
         localStorage.setItem('payment_status',status) 
         dispatch(payOrder(order[0].order_id,status))
-        if(successPay){
+        if(!loadingPay && successPay){
             navigate("/")
         }
     }
@@ -424,7 +424,7 @@ else{
                 </SummaryItem>
                 <SummaryItem type="total">
                   <SummaryItemText>Total :</SummaryItemText>
-                  <SummaryItemPrice>${order[0].total}</SummaryItemPrice>
+                  <SummaryItemPrice>${parseFloat(order[0].total).toFixed(2)}</SummaryItemPrice>
                 </SummaryItem>
                   <Button type="submit" onClick={paymentHandler}>PAY NOW</Button>
                   <PayPalScriptProvider options={{"client-id":clientId}}>
@@ -443,7 +443,7 @@ else{
                                 {
                                     description:order.description,
                                     amount:{
-                                        value:order[0].total
+                                        value:parseFloat(order[0].total).toFixed(2)
                                     }
                                 }
                             ]

@@ -86,6 +86,94 @@ const offerApplyDb = async ({order_id,user_id})=>{
     
 }
 
+
+const offerApplyCartDb = async ({cart_id,user_id})=>{
+    const {rowCount:DeleteCount} = await pool.query(
+        `DELETE FROM cart_item_offers_applied as cioa where cioa.cart_item_id in (select cart_item_id from cart_item as ci where ci.cart_id=$1)`,[cart_id]
+    )
+    console.log("Deleted ",DeleteCount)
+
+    //apply offers
+    const {rowCount:insertRowCount} = await pool.query(
+        `INSERT INTO cart_item_offers_applied(cart_item_id,offer_id,name,discount)
+        SELECT ci.cart_item_id,po.offer_id,o.name,o.discount_value from cart_item as ci jcin product_offers as po on ci.product_id = po.product_id jcin offers as o on o.offer_id = po.offer_id where ci.cart_id=$1;
+        `,
+        [cart_id]
+    );
+    let grouped_cart_status = false
+    const {rows:cartItems} = await pool.query(`SELECT ci.cart_item_id from cart_item as ci where ci.cart_id = $1`,[cart_id])
+
+    const {rows:groupedOffer} = await pool.query(`select cioa.offer_id from cart_item_offers_applied as cioa jcin cart_item as ci on ci.cart_item_id = cioa.cart_item_id jcin offers as o on o.offer_id = cioa.offer_id where o.offer_type='GROUPED_PRODUCT' and ci.cart_id = $1`,[cart_id])
+    console.log("grouped Offer ",groupedOffer)
+    if(groupedOffer[0]!==undefined){
+        const {rows:groupedcartItems} = await pool.query(`select product_id from product_offers where offer_id=$1`,[groupedOffer[0].offer_id])
+        console.log("grouped cart items ",groupedcartItems)
+
+        const {rows:cartGroupedOfferItems} = await pool.query(`select ci.product_id from cart_item as ci jcin cart_item_offers_applied as cioa on cioa.cart_item_id = ci.cart_item_id where cioa.offer_id = $1`,[groupedOffer[0].offer_id])
+        console.log("cart grouped ofer items ", cartGroupedOfferItems)
+
+        if(groupedcartItems.length == cartGroupedOfferItems.length){
+            grouped_cart_status = true
+        }
+    }
+    
+    console.log("insert row count ",insertRowCount)
+    //update cart item id table discount price
+    console.log(cartItems)
+    cartItems.map(async (ci)=>{
+        console.log("inside map ",ci)
+        const {rows:discountRows} = await pool.query(`SELECT discount,offer_id from cart_item_offers_applied as cioa where cioa.cart_item_id = $1`,[ci.cart_item_id])
+        console.log("discount rows", discountRows)
+        let totalDiscount=0
+        for(let i=0;i<discountRows.length;i++){
+            if(discountRows[i].offer_id === (groupedOffer[0]!==undefined ?groupedOffer[0].offer_id:null) && !grouped_cart_status){
+                continue
+            }
+            totalDiscount+=parseFloat(discountRows[i].discount)
+        }
+
+        // const totalDiscount = discountRows.reduce(sum_reduce)
+        console.log("total discount",totalDiscount)
+        const {rowCount} = await pool.query(`UPDATE cart_item set discount=$1 where cart_item_id=$2`,[totalDiscount,ci.cart_item_id])
+        console.log("updated rows count ",rowCount)
+    })
+    //update carts table
+    const{rows:pricecartItems} = await pool.query(`select ci.price,ci.discount from cart_item as ci jcin carts as o on ci.cart_id = o.cart_id where ci.cart_id=$1`,[cart_id])
+    console.log("price cart items ",pricecartItems)
+
+    let price = 0.0
+    for(let j =0;j<pricecartItems.length;j++){
+        price += ((pricecartItems[j].price *(100- pricecartItems[j].discount))/100)
+    }
+    console.log("update price ",price, (price*1.18)+10.00)
+
+    const {rowCount:Updatecart} = await pool.query(`update carts set price=$1,total=$2 where cart_id=$3`,[price,(price*1.18)+10.00,cart_id])
+    console.log("update carts table ",Updatecart)
+    // return offers applied table
+    const {rows:offers} = await pool.query(
+        `		SELECT o.name,o.offer_id from cart_item_offers_applied as cioa jcin offers as o on o.offer_id = cioa.offer_id jcin cart_item ci on cioa.cart_item_id = ci.cart_item_id where ci.cart_id =$1
+        `,
+        [cart_id]
+    )
+    if(!grouped_cart_status){
+        const { rows:cartItemsOffersApplied} = await pool.query(
+            `SELECT * from cart_item_offers_applied as cioa jcin cart_item as ci on ci.cart_item_id = cioa.cart_item_id where ci.cart_id = $1 `,[cart_id]
+        )
+        return cartItemsOffersApplied
+
+    }
+    else{
+        const { rows:cartItemsOffersApplied} = await pool.query(
+            `SELECT * from cart_item_offers_applied as cioa jcin cart_item as ci on ci.cart_item_id = cioa.cart_item_id where cioa.offer_id<>$2 and ci.cart_id = $1  `,[cart_id,(groupedOffer[0]!==undefined?groupedOffer[0].offer_id:null)]
+        )
+        return cartItemsOffersApplied
+
+    }
+    
+}
+
+
 export{
-    offerApplyDb
+    offerApplyDb,
+    offerApplyCartDb
 }
