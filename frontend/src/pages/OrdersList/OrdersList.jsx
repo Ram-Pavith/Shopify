@@ -1,21 +1,25 @@
 import "./OrdersList.css";
-import { DataGrid } from "@material-ui/data-grid";
-import { DeleteOutline } from "@material-ui/icons";
+import { DataGrid } from '@mui/x-data-grid';
+import { DeleteOutline } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteProduct, getProducts } from "../../redux/apiCalls";
-import { productRows } from "../../dummyData";
+// import { deleteProduct, getProducts } from "../../redux/apiCalls";
+// import { productRows } from "../../dummyData";
+import {listMyOrders} from "../../actions/orderActions"
 export default function OrdersList() {
   const dispatch = useDispatch();
   //const products = useSelector((state) => state.product.products);
-  const products = productRows
+  // const products = productRows
+  const orderDetails = useSelector(state=>state.orderListMy)
+  const {orders} = orderDetails
+  console.log(orders)
   useEffect(() => {
-    getProducts(dispatch);
+    dispatch(listMyOrders())
   }, [dispatch]);
 
   const handleDelete = (id) => {
-    deleteProduct(id, dispatch);
+    // deleteProduct(id, dispatch);
   };
   function generateRandom() {
     var length = 8,
@@ -28,15 +32,15 @@ export default function OrdersList() {
 }
 
   const columns = [
-    { field: "_id", headerName: "ID", width: 220 },
+    { field: "order_id", headerName: "ID", width: 220 },
     {
-      field: "product",
-      headerName: "Product",
+      field: "order",
+      headerName: "Order",
       width: 200,
       renderCell: (params) => {
         return (
-          <div className="productListItem">
-            <img className="productListImg" src={params.row.img} alt="" />
+          <div className="orderListItem">
+            <img className="orderListImg" src={params.row.image_url} alt="" />
             {params.row.title}
           </div>
         );
@@ -55,12 +59,12 @@ export default function OrdersList() {
       renderCell: (params) => {
         return (
           <>
-            <Link to={"/product/" + params.row._id}>
-              <button className="productListEdit">Edit</button>
+            <Link to={`/order/${params.row.order_id}`}>
+              <button className="orderListDetails">Details</button>
             </Link>
             <DeleteOutline
-              className="productListDelete"
-              onClick={() => handleDelete(params.row._id)}
+              className="OrderListDelete"
+              onClick={() => handleDelete(params.row.order_id)}
             />
           </>
         );
@@ -71,7 +75,7 @@ export default function OrdersList() {
   return (
     <div className="productList">
       <DataGrid
-        rows={products}
+        rows={orders}
         disableSelectionOnClick
         columns={columns}
         getRowId={(row) =>  generateRandom()}
