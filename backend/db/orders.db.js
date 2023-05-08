@@ -67,10 +67,19 @@ const getOrderDb = async ({ order_id, user_id }) => {
 };
 
 const payOrderDb = async ({order_id,payment_status})=>{
-  const {rowCount} = await pool.query(
-    `UPDATE orders SET payment_status = $2 where order_id=$1;`,
-    [order_id,payment_status]
-  )
+  if(payment_status==='COMPLETED'){
+    const {rowCount} = await pool.query(
+      `UPDATE orders SET payment_status=$2,is_paid=true,paid_at=now() where order_id=$1`,
+      [order_id,payment_status]
+    )
+  }
+  else{
+    const {rowCount} = await pool.query(
+      `UPDATE orders SET payment_status = $2 where order_id=$1;`,
+      [order_id,payment_status]
+    )
+  }
+  
   console.log(rowCount)
   console.log(order_id,payment_status)
   return rowCount;
