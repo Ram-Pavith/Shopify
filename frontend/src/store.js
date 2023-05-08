@@ -1,16 +1,19 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
+// import { AsyncStorage } from 'react-native'
+import { configureStore } from "@reduxjs/toolkit";
 import { composeWithDevTools } from 'redux-devtools-extension'
 import {
   productListReducer,
   productDetailsReducer,
+  productDetailsByNameReducer,
   productDeleteReducer,
   productCreateReducer,
   productUpdateReducer,
   productReviewCreateReducer,
-  productTopRatedReducer,
-} from './reducers/productReducers'
-import { cartReducer } from './reducers/cartReducers'
+  productByCategoryListReducer,
+} from './reducers/productReducers.js'
+import { cartReducer,getCartReducer,resetCartReducer,addItemToCartReducer } from './reducers/cartReducers.js'
 import {
   userLoginReducer,
   userRegisterReducer,
@@ -19,7 +22,7 @@ import {
   userListReducer,
   userDeleteReducer,
   userUpdateReducer,
-} from './reducers/userReducers'
+} from './reducers/userReducers.js'
 import {
   orderCreateReducer,
   orderDetailsReducer,
@@ -27,17 +30,32 @@ import {
   orderDeliverReducer,
   orderListMyReducer,
   orderListReducer,
-} from './reducers/orderReducers'
+} from './reducers/orderReducers.js'
 
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
+// import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 const reducer = combineReducers({
   productList: productListReducer,
   productDetails: productDetailsReducer,
+  productDetailsByName: productDetailsByNameReducer,
   productDelete: productDeleteReducer,
   productCreate: productCreateReducer,
   productUpdate: productUpdateReducer,
   productReviewCreate: productReviewCreateReducer,
-  productTopRated: productTopRatedReducer,
+  productsByCategory: productByCategoryListReducer,
   cart: cartReducer,
+  getCartItems:getCartReducer,
+  resetCart:resetCartReducer,
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   userDetails: userDetailsReducer,
@@ -53,9 +71,25 @@ const reducer = combineReducers({
   orderList: orderListReducer,
 })
 
+const persistConfig = {
+  key: "root",
+  version: 1,
+  storage:AsyncStorage,
+};
+
+const persistor = persistReducer(persistConfig, reducer);
+
 const cartItemsFromStorage = localStorage.getItem('cartItems')
   ? JSON.parse(localStorage.getItem('cartItems'))
   : []
+const cartFromStorage = localStorage.getItem('cart')?JSON.parse(localStorage.getItem('cart')):[]
+console.log("form store",cartFromStorage)
+
+const orderItemsFromStorage = localStorage.getItem('orderItems')?JSON.parse(localStorage.getItem('orderItems')):[]
+
+const cartIdFromStorage = localStorage.getItem('cart_id')?localStorage.getItem('card_id'):null
+
+const orderIdFromStorage = localStorage.getItem('order_id')?localStorage.getItem('order_id'):null
 
 const userInfoFromStorage = localStorage.getItem('userInfo')
   ? JSON.parse(localStorage.getItem('userInfo'))
@@ -67,7 +101,7 @@ const shippingAddressFromStorage = localStorage.getItem('shippingAddress')
 
 const initialState = {
   cart: {
-    cartItems: cartItemsFromStorage,
+    cartItems: cartFromStorage,
     shippingAddress: shippingAddressFromStorage,
   },
   userLogin: { userInfo: userInfoFromStorage },
@@ -75,10 +109,15 @@ const initialState = {
 
 const middleware = [thunk]
 
-const store = createStore(
-  reducer,
+export const store = configureStore({
+  reducer:persistor,
   initialState,
-  composeWithDevTools(applyMiddleware(...middleware))
-)
+  middleware:middleware,
+  devTools:true,
 
-export default store
+  //composeWithDevTools(applyMiddleware(...middleware))
+})
+
+// export {persistor, store}
+
+export let persiststore = persistStore(store);

@@ -20,10 +20,13 @@ import {
   PRODUCT_CREATE_REVIEW_SUCCESS,
   PRODUCT_CREATE_REVIEW_FAIL,
   PRODUCT_CREATE_REVIEW_RESET,
-  PRODUCT_TOP_REQUEST,
-  PRODUCT_TOP_SUCCESS,
-  PRODUCT_TOP_FAIL,
-} from '../constants/productConstants'
+  PRODUCT_CATEGORY_REQUEST,
+  PRODUCT_CATEGORY_SUCCESS,
+  PRODUCT_CATEGORY_FAIL,
+  PRODUCT_DETAILS_BY_NAME_REQUEST,
+  PRODUCT_DETAILS_BY_NAME_SUCCESS,
+  PRODUCT_DETAILS_BY_NAME_FAIL
+} from '../constants/productConstants.js'
 
 export const productListReducer = (state = { products: [] }, action) => {
   switch (action.type) {
@@ -32,7 +35,7 @@ export const productListReducer = (state = { products: [] }, action) => {
     case PRODUCT_LIST_SUCCESS:
       return {
         loading: false,
-        products: action.payload.products,
+        products: action.payload,
         pages: action.payload.pages,
         page: action.payload.page,
       }
@@ -51,8 +54,21 @@ export const productDetailsReducer = (
     case PRODUCT_DETAILS_REQUEST:
       return { ...state, loading: true }
     case PRODUCT_DETAILS_SUCCESS:
-      return { loading: false, product: action.payload }
+        return { loading: false, product: action.payload }
     case PRODUCT_DETAILS_FAIL:
+      return { loading: false, error: action.payload }
+    default:
+      return state
+  }
+}
+
+export const productDetailsByNameReducer = (state = {product:{reviews:[]}},action)=>{
+  switch (action.type) {
+    case PRODUCT_DETAILS_BY_NAME_REQUEST:
+      return { ...state, loading: true }
+    case PRODUCT_DETAILS_BY_NAME_SUCCESS:
+        return { loading: false, product: action.payload }
+    case PRODUCT_DETAILS_BY_NAME_FAIL:
       return { loading: false, error: action.payload }
     default:
       return state
@@ -117,13 +133,13 @@ export const productReviewCreateReducer = (state = {}, action) => {
   }
 }
 
-export const productTopRatedReducer = (state = { products: [] }, action) => {
+export const productByCategoryListReducer = (state = { products: [] }, action) => {
   switch (action.type) {
-    case PRODUCT_TOP_REQUEST:
+    case PRODUCT_CATEGORY_REQUEST:
       return { loading: true, products: [] }
-    case PRODUCT_TOP_SUCCESS:
+    case PRODUCT_CATEGORY_SUCCESS:
       return { loading: false, products: action.payload }
-    case PRODUCT_TOP_FAIL:
+    case PRODUCT_CATEGORY_FAIL:
       return { loading: false, error: action.payload }
     default:
       return state

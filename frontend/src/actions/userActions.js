@@ -24,11 +24,12 @@ import {
   USER_UPDATE_FAIL,
   USER_UPDATE_SUCCESS,
   USER_UPDATE_REQUEST,
-} from '../constants/userConstants'
-import { ORDER_LIST_MY_RESET } from '../constants/orderConstants'
+} from '../constants/userConstants.js'
+import { ORDER_LIST_MY_RESET } from '../constants/orderConstants.js'
 
 export const login = (email, password) => async (dispatch) => {
   try {
+
     dispatch({
       type: USER_LOGIN_REQUEST,
     })
@@ -38,9 +39,9 @@ export const login = (email, password) => async (dispatch) => {
         'Content-Type': 'application/json',
       },
     }
-
+    console.log(email,password)
     const { data } = await axios.post(
-      '/api/users/login',
+      '/api/auth/login',
       { email, password },
       config
     )
@@ -51,6 +52,19 @@ export const login = (email, password) => async (dispatch) => {
     })
 
     localStorage.setItem('userInfo', JSON.stringify(data))
+    localStorage.setItem('cart_id',data.user.cart_id)
+    //fetching cart
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
+    const configCart = {
+      headers: {
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
+      },
+    }
+    const Cart = await axios.get('/api/cart',configCart)
+    const dataCart = Cart.data
+
+    localStorage.setItem('cart',JSON.stringify(dataCart))
   } catch (error) {
     dispatch({
       type: USER_LOGIN_FAIL,
@@ -65,13 +79,23 @@ export const login = (email, password) => async (dispatch) => {
 export const logout = () => (dispatch) => {
   localStorage.removeItem('userInfo')
   localStorage.removeItem('cartItems')
+  localStorage.removeItem('cart')
+  localStorage.removeItem('cart_id')
   localStorage.removeItem('shippingAddress')
   localStorage.removeItem('paymentMethod')
+  localStorage.removeItem('orderItems')
+  localStorage.removeItem('order_id')
+  localStorage.removeItem('city')
+  localStorage.removeItem('state')
+  localStorage.removeItem('country')
+  localStorage.removeItem('address')
+  localStorage.removeItem('persist:root')
   dispatch({ type: USER_LOGOUT })
   dispatch({ type: USER_DETAILS_RESET })
   dispatch({ type: ORDER_LIST_MY_RESET })
   dispatch({ type: USER_LIST_RESET })
   document.location.href = '/login'
+  return {message:"Logout Successfull"}
 }
 
 export const register = (name, email, password) => async (dispatch) => {
@@ -87,8 +111,8 @@ export const register = (name, email, password) => async (dispatch) => {
     }
 
     const { data } = await axios.post(
-      '/api/users',
-      { name, email, password },
+      '/api/auth/signup',
+      { username:name, email, password },
       config
     )
 
@@ -116,6 +140,7 @@ export const register = (name, email, password) => async (dispatch) => {
 
 export const getUserDetails = (id) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: USER_DETAILS_REQUEST,
     })
@@ -126,7 +151,8 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -153,6 +179,7 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
 
 export const updateUserProfile = (user) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: USER_UPDATE_PROFILE_REQUEST,
     })
@@ -164,7 +191,8 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -196,6 +224,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
 
 export const listUsers = () => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: USER_LIST_REQUEST,
     })
@@ -206,7 +235,8 @@ export const listUsers = () => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -233,6 +263,7 @@ export const listUsers = () => async (dispatch, getState) => {
 
 export const deleteUser = (id) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: USER_DELETE_REQUEST,
     })
@@ -243,7 +274,8 @@ export const deleteUser = (id) => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -267,6 +299,7 @@ export const deleteUser = (id) => async (dispatch, getState) => {
 
 export const updateUser = (user) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: USER_UPDATE_REQUEST,
     })
@@ -278,7 +311,8 @@ export const updateUser = (user) => async (dispatch, getState) => {
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 

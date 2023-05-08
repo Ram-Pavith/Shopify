@@ -18,11 +18,14 @@ import {
   PRODUCT_CREATE_REVIEW_REQUEST,
   PRODUCT_CREATE_REVIEW_SUCCESS,
   PRODUCT_CREATE_REVIEW_FAIL,
-  PRODUCT_TOP_REQUEST,
-  PRODUCT_TOP_SUCCESS,
-  PRODUCT_TOP_FAIL,
-} from '../constants/productConstants'
-import { logout } from './userActions'
+  PRODUCT_CATEGORY_REQUEST,
+  PRODUCT_CATEGORY_SUCCESS,
+  PRODUCT_CATEGORY_FAIL,
+  PRODUCT_DETAILS_BY_NAME_REQUEST,
+  PRODUCT_DETAILS_BY_NAME_SUCCESS,
+  PRODUCT_DETAILS_BY_NAME_FAIL
+} from '../constants/productConstants.js'
+import { logout } from './userActions.js'
 
 export const listProducts = (keyword = '', pageNumber = '') => async (
   dispatch
@@ -31,7 +34,7 @@ export const listProducts = (keyword = '', pageNumber = '') => async (
     dispatch({ type: PRODUCT_LIST_REQUEST })
 
     const { data } = await axios.get(
-      `/api/products?keyword=${keyword}&pageNumber=${pageNumber}`
+      `/api/products/`//?keyword=${keyword}&pageNumber=${pageNumber}`
     )
 
     dispatch({
@@ -49,12 +52,12 @@ export const listProducts = (keyword = '', pageNumber = '') => async (
   }
 }
 
-export const listProductDetails = (id) => async (dispatch) => {
+export const listProductDetails = (product_id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST })
-
-    const { data } = await axios.get(`/api/products/${id}`)
-
+    
+    const { data } = await axios.get(`http://localhost:5000/api/products/${product_id}`)
+    console.log(data)
     dispatch({
       type: PRODUCT_DETAILS_SUCCESS,
       payload: data,
@@ -70,8 +73,30 @@ export const listProductDetails = (id) => async (dispatch) => {
   }
 }
 
+export const listProductDetailsByName = (name) => async (dispatch) => {
+  try {
+    dispatch({ type: PRODUCT_DETAILS_BY_NAME_REQUEST })
+    
+    const { data } = await axios.get(`http://localhost:5000/api/products/search/${name}`)
+    console.log(data)
+    dispatch({
+      type: PRODUCT_DETAILS_BY_NAME_SUCCESS,
+      payload: data,
+    })
+  } catch (error) {
+    dispatch({
+      type: PRODUCT_DETAILS_BY_NAME_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    })
+  }
+}
+
 export const deleteProduct = (id) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: PRODUCT_DELETE_REQUEST,
     })
@@ -82,7 +107,8 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -106,8 +132,9 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
   }
 }
 
-export const createProduct = () => async (dispatch, getState) => {
+export const createProduct = (product) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: PRODUCT_CREATE_REQUEST,
     })
@@ -118,11 +145,12 @@ export const createProduct = () => async (dispatch, getState) => {
 
     const config = {
       headers: {
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
-    const { data } = await axios.post(`/api/products`, {}, config)
+    const { data } = await axios.post(`/api/products`, product, config)
 
     dispatch({
       type: PRODUCT_CREATE_SUCCESS,
@@ -145,6 +173,7 @@ export const createProduct = () => async (dispatch, getState) => {
 
 export const updateProduct = (product) => async (dispatch, getState) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: PRODUCT_UPDATE_REQUEST,
     })
@@ -156,7 +185,8 @@ export const updateProduct = (product) => async (dispatch, getState) => {
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -191,6 +221,7 @@ export const createProductReview = (productId, review) => async (
   getState
 ) => {
   try {
+    const userinfo = JSON.parse(localStorage.getItem('userInfo'))
     dispatch({
       type: PRODUCT_CREATE_REVIEW_REQUEST,
     })
@@ -202,7 +233,8 @@ export const createProductReview = (productId, review) => async (
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`,
+        Authorization: `Bearer ${userinfo.token}`,
+        authToken:userinfo.token
       },
     }
 
@@ -216,7 +248,7 @@ export const createProductReview = (productId, review) => async (
       error.response && error.response.data.message
         ? error.response.data.message
         : error.message
-    if (message === 'Not authorized, token failed') {
+    if (message.Includes('Token missing')) {
       dispatch(logout())
     }
     dispatch({
@@ -226,19 +258,19 @@ export const createProductReview = (productId, review) => async (
   }
 }
 
-export const listTopProducts = () => async (dispatch) => {
+export const listByCategoryProducts = (category) => async (dispatch) => {
   try {
-    dispatch({ type: PRODUCT_TOP_REQUEST })
+    dispatch({ type: PRODUCT_CATEGORY_REQUEST })
 
-    const { data } = await axios.get(`/api/products/top`)
+    const { data } = await axios.get(`/api/products/category/${category}`)
 
     dispatch({
-      type: PRODUCT_TOP_SUCCESS,
+      type: PRODUCT_CATEGORY_SUCCESS,
       payload: data,
     })
   } catch (error) {
     dispatch({
-      type: PRODUCT_TOP_FAIL,
+      type: PRODUCT_CATEGORY_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
