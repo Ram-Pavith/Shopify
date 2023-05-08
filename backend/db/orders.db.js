@@ -53,7 +53,7 @@ const getAllOrdersDb = async () => {
 const getOrderDb = async ({ order_id, user_id }) => {
   console.log(order_id,user_id)
   const { rows: order } = await pool.query(
-    `SELECT orders.*,products.*, order_item.quantity,order_item.order_item_id as order_item_id 
+    `SELECT orders.*,products.*, order_item.quantity,order_item.order_item_id as order_item_id, order_item.discount as discount
       from orders 
       join order_item
       on order_item.order_id = orders.order_id
@@ -67,22 +67,24 @@ const getOrderDb = async ({ order_id, user_id }) => {
 };
 
 const payOrderDb = async ({order_id,payment_status})=>{
+  let updatedRows = 0
   if(payment_status==='COMPLETED'){
     const {rowCount} = await pool.query(
       `UPDATE orders SET payment_status=$2,is_paid=true,paid_at=now() where order_id=$1`,
       [order_id,payment_status]
     )
+    updatedRows = rowCount
   }
   else{
     const {rowCount} = await pool.query(
       `UPDATE orders SET payment_status = $2 where order_id=$1;`,
       [order_id,payment_status]
     )
+    updatedRows = rowCount
   }
   
-  console.log(rowCount)
   console.log(order_id,payment_status)
-  return rowCount;
+  return updatedRows;
 }
 
 const deliverOrderDb = async ({order_id})=>{

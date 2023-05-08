@@ -19,16 +19,18 @@ const offerApplyDb = async ({order_id,user_id})=>{
 
     const {rows:groupedOffer} = await pool.query(`select oioa.offer_id from order_item_offers_applied as oioa join order_item as oi on oi.order_item_id = oioa.order_item_id join offers as o on o.offer_id = oioa.offer_id where o.offer_type='GROUPED_PRODUCT' and oi.order_id = $1`,[order_id])
     console.log("grouped Offer ",groupedOffer)
+    if(groupedOffer[0]!==undefined){
+        const {rows:groupedOrderItems} = await pool.query(`select product_id from product_offers where offer_id=$1`,[groupedOffer[0].offer_id])
+        console.log("grouped order items ",groupedOrderItems)
 
-    const {rows:groupedOrderItems} = await pool.query(`select product_id from product_offers where offer_id=$1`,[groupedOffer[0].offer_id])
-    console.log("grouped order items ",groupedOrderItems)
+        const {rows:orderGroupedOfferItems} = await pool.query(`select oi.product_id from order_item as oi join order_item_offers_applied as oioa on oioa.order_item_id = oi.order_item_id where oioa.offer_id = $1`,[groupedOffer[0].offer_id])
+        console.log("order grouped ofer items ", orderGroupedOfferItems)
 
-    const {rows:orderGroupedOfferItems} = await pool.query(`select oi.product_id from order_item as oi join order_item_offers_applied as oioa on oioa.order_item_id = oi.order_item_id where oioa.offer_id = $1`,[groupedOffer[0].offer_id])
-    console.log("order grouped ofer items ", orderGroupedOfferItems)
-
-    if(groupedOrderItems.length == orderGroupedOfferItems.length){
-        grouped_order_status = true
+        if(groupedOrderItems.length == orderGroupedOfferItems.length){
+            grouped_order_status = true
+        }
     }
+    
     console.log("insert row count ",insertRowCount)
     //update order item id table discount price
     console.log(orderItems)
@@ -38,7 +40,7 @@ const offerApplyDb = async ({order_id,user_id})=>{
         console.log("discount rows", discountRows)
         let totalDiscount=0
         for(let i=0;i<discountRows.length;i++){
-            if(discountRows[i].offer_id === groupedOffer[0].offer_id && !grouped_order_status){
+            if(discountRows[i].offer_id === (groupedOffer[0]!==undefined ?groupedOffer[0].offer_id:null) && !grouped_order_status){
                 continue
             }
             totalDiscount+=parseFloat(discountRows[i].discount)
@@ -49,27 +51,39 @@ const offerApplyDb = async ({order_id,user_id})=>{
         const {rowCount} = await pool.query(`UPDATE order_item set discount=$1 where order_item_id=$2`,[totalDiscount,oi.order_item_id])
         console.log("updated rows count ",rowCount)
     })
+    //update orders table
+    const{rows:priceOrderItems} = await pool.query(`select oi.price,oi.discount from order_item as oi join orders as o on oi.order_id = o.order_id where oi.order_id=$1`,[order_id])
+    console.log("price order items ",priceOrderItems)
+
+    let price = 0.0
+    for(let j =0;j<priceOrderItems.length;j++){
+        price += ((priceOrderItems[j].price *(100- priceOrderItems[j].discount))/100)
+    }
+    console.log("update price ",price, (price*1.18)+10.00)
+
+    const {rowCount:UpdateOrder} = await pool.query(`update orders set price=$1,total=$2 where order_id=$3`,[price,(price*1.18)+10.00,order_id])
+    console.log("update orders table ",UpdateOrder)
     // return offers applied table
     const {rows:offers} = await pool.query(
         `		SELECT o.name,o.offer_id from order_item_offers_applied as oioa join offers as o on o.offer_id = oioa.offer_id join order_item oi on oioa.order_item_id = oi.order_item_id where oi.order_id =$1
         `,
         [order_id]
     )
-    let offerApplied = []
-    if(grouped_order_status){
+    if(!grouped_order_status){
         const { rows:orderItemsOffersApplied} = await pool.query(
             `SELECT * from order_item_offers_applied as oioa join order_item as oi on oi.order_item_id = oioa.order_item_id where oi.order_id = $1 `,[order_id]
         )
-        offerApplied = orderItemsOffersApplied
+        return orderItemsOffersApplied
+
     }
     else{
         const { rows:orderItemsOffersApplied} = await pool.query(
-            `SELECT * from order_item_offers_applied as oioa join order_item as oi on oi.order_item_id = oioa.order_item_id where oioa.offer_id<>$2 and oi.order_id = $1  `,[order_id,groupedOffer[0].offer_id]
+            `SELECT * from order_item_offers_applied as oioa join order_item as oi on oi.order_item_id = oioa.order_item_id where oioa.offer_id<>$2 and oi.order_id = $1  `,[order_id,(groupedOffer[0]!==undefined?groupedOffer[0].offer_id:null)]
         )
-        offerApplied = orderItemsOffersApplied
+        return orderItemsOffersApplied
+
     }
     
-    return offerApplied;
 }
 
 export{

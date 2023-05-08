@@ -278,11 +278,11 @@ const PlaceOrder = () => {
                 <PriceDetail>
                   <ProductAmountContainer>
                     <AddIcon className='increment' onClick={()=>cartDispatch(incrementQuantityCart(product.cart_item_id))}/>
-                    <ProductAmount>{product.quantity}</ProductAmount>
+                    <ProductAmount><b>Quantity: </b>{product.quantity}</ProductAmount>
                     <RemoveIcon className='decrement' onClick={()=>cartDispatch(decrementQuantityCart(product.cart_item_id))}/>
                   </ProductAmountContainer>
                   <ProductPrice>
-                    ${product.price} * {product.quantity} =   ${product.price * product.quantity}
+                   <b>Price: </b> ${product.price} * {product.quantity} =   ${product.price * product.quantity}
                   </ProductPrice>
                 </PriceDetail>
               </Product>

@@ -16,6 +16,7 @@ import {
     ORDER_PAY_RESET,
     ORDER_DELIVER_RESET,
   } from '../../constants/orderConstants.js'
+import { applyOffer } from "../../actions/offerAction.js";
 
 const KEY = process.env.REACT_APP_STRIPE;
 
@@ -176,8 +177,10 @@ const Button = styled.button`
 
 const Order = () => {
     const order_id = useParams().order_id
+    const dummy = (localStorage.getItem('order_id'))
+    const dummyOffers = localStorage.getItem('offers')
     console.log(order_id)
-
+    const OfferDispatch = useDispatch()
     const dispatch = useDispatch()
     const [sdkReady,setSdkReady] = useState(false)
     const addDecimals = (num) => {
@@ -185,11 +188,14 @@ const Order = () => {
       }
     let itemsPrice
       const navigate = useNavigate()
-    //const orderDetails = useSelector(state=>state.orderDetails)
-    //let {loading,error,order} = orderDetails
-     const orderDetails = JSON.parse(localStorage.getItem('orderItems'))
-     const order = orderDetails
-     let loading = false
+    const orderDetails = useSelector(state=>state.orderDetails)
+    let {loading:orderDetailsLoading,error,order} = orderDetails
+     //const orderDetails = JSON.parse(localStorage.getItem('orderItems'))
+    // const order = orderDetails
+     const offerApply = useSelector(state=>state.applyOffer)
+     const {loading:offersLoading,offers} = offerApply
+     console.log("Offers Applied : ",offerApply)
+     //let loading = false
     const orderPay = useSelector((state) => state.orderPay)
     const { loading: loadingPay, success: successPay } = orderPay
   
@@ -202,20 +208,25 @@ const Order = () => {
     const x = async()=>await axios.get('/api/config/paypal')
     //   const {data:clientId} = x()
     const clientId = "AZouWH9pB7bJGdVFI9osFLnqb_1HagcB8lcHxiGzbrqNHy9X4C7p2PwTnO1k6zx-kP2pq5NZJC6HmKe0"
-    // dispatch(getOrderDetails(order_id))
-    console.log(orderDetails)
-    if(!loading){
+    //dispatch(getOrderDetails(order_id))
+    //OfferDispatch(applyOffer(order_id))
+
+    if(!orderDetailsLoading){
         itemsPrice = addDecimals(
             order.reduce((acc,item)=>acc+item.price*item.quantity,0)
         )
     }
     // dispatch())
+
    //dispatch(getOrderDetails(order_id))
+   
    useEffect(()=>{
        dispatch(getOrderDetails(order_id))
-   },[order_id])
+        OfferDispatch(applyOffer(order_id))
+    },[dispatch,OfferDispatch,order_id,userInfo,dummy,dummyOffers])
     console.log(orderDetails)
     console.log(order)
+    console.log(offers)
     const paymentHandler = (status)=>{   
         console.log(status)
         localStorage.setItem('payment_status',status) 
@@ -320,7 +331,7 @@ const Order = () => {
 //     };
 //     stripeToken && makeRequest();
 //   }, [stripeToken, cart.total, navigate]);
-if(loading){
+if(orderDetailsLoading||offersLoading){
     return <BarLoader/>
 }
 else{
@@ -352,10 +363,13 @@ else{
                     </ProductDetail>
                     <PriceDetail>
                       <ProductAmountContainer>
-                        <ProductAmount>{product.quantity}</ProductAmount>
+                        <ProductAmount><b>Quantity: </b>{product.quantity}</ProductAmount>
+                      </ProductAmountContainer>
+                      <ProductAmountContainer>
+                        <ProductAmount><b>Discount: </b>{product.discount}%</ProductAmount>
                       </ProductAmountContainer>
                       <ProductPrice>
-                        ${product.price} * {product.quantity} =   ${product.price * product.quantity}
+                       <b>Price: </b> $<span className="oldPrice">{product.price}  </span>{(product.price*((100-product.discount)/100))} * {product.quantity} =   ${(product.price*((100-product.discount)/100)) * product.quantity}
                       </ProductPrice>
                     </PriceDetail>
                   </Product>
@@ -364,6 +378,20 @@ else{
                 ))}
                 <Hr />
               </Info>
+              <Summary>
+                <SummaryTitle>OFFERS APPLIED</SummaryTitle>
+                {offers.map((off)=>(
+                    <div className="item" key={off.offer_id}>
+                        <SummaryItem>
+                            <SummaryItemText>OFFER: {off.name}</SummaryItemText>
+                        </SummaryItem>
+                        <SummaryItem>
+                            <SummaryItemText>DISCOUNT: {off.discount}</SummaryItemText>
+                        </SummaryItem>
+                    </div>
+                ))}
+                
+              </Summary>
               <Summary>
                 <SummaryTitle>ORDER SUMMARY</SummaryTitle>
                 <SummaryItem>

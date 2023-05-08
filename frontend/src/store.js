@@ -32,6 +32,8 @@ import {
   orderListReducer,
 } from './reducers/orderReducers.js'
 
+import {applyOfferReducer} from "./reducers/offerReducer.js"
+
 import {
   persistStore,
   persistReducer,
@@ -45,6 +47,7 @@ import {
 // import AsyncStorage from '@react-native-community/async-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 const reducer = combineReducers({
+  applyOffer:applyOfferReducer,
   productList: productListReducer,
   productDetails: productDetailsReducer,
   productDetailsByName: productDetailsByNameReducer,
