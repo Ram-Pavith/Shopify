@@ -6,15 +6,7 @@ const createOrder = async (req, res) => {
   const user_id = req.user.user_id;
   const cart_id = req.user.cart_id;
 
-  const newOrder = await orderService.createOrder({
-    cart_id,
-    price,
-    user_id,
-    payment_method:"PAYPAL",
-    tax_price:price*0.18,
-    shipping_price:10,
-    total:price*1.18 + 10
-  });
+  const newOrder = await orderService.createOrder(req.body);
   try{
   // delete all items from cart_items table for the user after order has been processed
   await cartService.emptyCart(cart_id);
@@ -29,11 +21,22 @@ const createOrder = async (req, res) => {
 
 };
 
-const getAllOrders = async (req, res) => {
+const getAllOrdersByUser = async (req, res) => {
   const { page = 1 } = req.query;
-  const userId = req.user.user_id;
+  const userId = req.params.user_id;
   try{
-    const orders = await orderService.getAllOrders(userId, page);
+    const orders = await orderService.getAllOrdersByUser(userId, page);
+    res.status(200).json(orders);
+  }
+  catch(err){
+    res.status(400).json({message:err.message,stackTrace:err.stack})
+  }
+
+};
+
+const getAllOrders = async (req, res) => {
+  try{
+    const orders = await orderService.getAllOrders();
     res.status(200).json(orders);
   }
   catch(err){
@@ -44,6 +47,7 @@ const getAllOrders = async (req, res) => {
 
 const getOrder = async (req, res) => {
   const order_id  = req.params.order_id;
+  console.log(order_id)
   const user_id = req.user.user_id;
   try{
     const order = await orderService.getOrderById({ order_id, user_id });
@@ -55,8 +59,36 @@ const getOrder = async (req, res) => {
 
 };
 
+const putOrderPaymentUpdate = async(req,res) =>{
+  try{
+    const payment_status = req.params.payment_status
+    console.log("from pay order controller",payment_status)
+    const order_id = req.params.order_id
+    console.log("from controller",payment_status,order_id)
+    const order = await orderService.payOrder({payment_status,order_id})
+    res.status(200).json(order);
+  }
+  catch(err){
+    res.status(400).json({message:err.message,stackTrace:err.stack})
+  }
+};
+
+const putOrderDeliverUpdate = async(req,res) =>{
+  try{
+    const order_id = req.params.order_id
+    const order = await orderService.deliverOrder({order_id})
+    res.status(200).json(order);
+  }
+  catch(err){
+    res.status(400).json({message:err.message,stackTrace:err.stack})
+  }
+};
+
 export {
   createOrder,
+  getAllOrdersByUser,
   getAllOrders,
   getOrder,
+  putOrderPaymentUpdate,
+  putOrderDeliverUpdate
 };

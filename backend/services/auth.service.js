@@ -126,7 +126,8 @@ class AuthService {
           user_id,
           username,
           email,
-          cart_id
+          cart_id,
+          is_admin
         },
       };
     } catch (error) {

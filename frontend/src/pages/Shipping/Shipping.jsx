@@ -6,6 +6,7 @@ import { mobile } from "../../responsive";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
+import CheckoutSteps from "../../components/CheckoutSteps/CheckoutSteps.jsx"
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -95,11 +96,13 @@ const Shipping = (location,history) => {
     localStorage.setItem('state',state)
     localStorage.setItem('country',country)
     //const{userInfo,loading,error} = dispatch(login(username, password ));
-    navigate('/order')
+    navigate('/placeOrder')
     console.log(userInfo)
 
   };
   return (
+    <>
+    <CheckoutSteps step1 step2/>
     <Container>
       <Wrapper>
         <Title>SHIPPING DETAILS</Title>
@@ -130,6 +133,7 @@ const Shipping = (location,history) => {
         </Form>
       </Wrapper>
     </Container>
+    </>
   );
 };
 

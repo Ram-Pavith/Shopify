@@ -7,6 +7,10 @@ const createOrderDb = async ({
   user_id,
   payment_method,
   shipping_price,
+  address,
+  city,
+  state,
+  country,
   tax_price,
   total
 }) => {
@@ -14,8 +18,8 @@ const createOrderDb = async ({
   console.log(cart_id,price,user_id,payment_method,shipping_price,tax_price,total)
   // create an order
   const { rows: order } = await pool.query(
-    "INSERT INTO orders(user_id, price, payment_method,tax_price,shipping_price,total,order_id, payment_status) VALUES($1, $2, $3, $4, $5,$6,$7,$8) returning *",
-    [user_id,price, payment_method,tax_price,shipping_price,total,order_id,"NOT PAID"]
+    "INSERT INTO orders(user_id, price, payment_method,tax_price,shipping_price,total,order_id, payment_status,address,city,state,country) VALUES($1, $2, $3, $4, $5,$6,$7,$8,$9,$10,$11,$12) returning *",
+    [user_id,price, payment_method,tax_price,shipping_price,total,order_id,"NOT PAID",address,city,state,country]
   );
 
   // copy cart items from the current cart_item table into order_item table
@@ -31,23 +35,25 @@ const createOrderDb = async ({
   return order;
 };
 
-const getAllOrdersDb = async ({ user_id, limit, offset }) => {
-  const { rowCount } = await pool.query(
+const getAllOrdersByUserDb = async ({ user_id, limit, offset }) => {
+  const { rows:orders } = await pool.query(
     "SELECT * from orders WHERE orders.user_id = $1",
     [user_id]
   );
-  const orders = await pool.query(
-    `SELECT order_id, user_id, status, date::date, amount, total 
-      from orders WHERE orders.user_id = $1 order by order_id desc limit $2 offset $3`,
-    [user_id, limit, offset]
+  return orders;
+};
+
+const getAllOrdersDb = async () => {
+  const { rows:orders } = await pool.query(
+    "SELECT * from orders"
   );
-  return { items: orders.rows, total: rowCount };
+  return orders;
 };
 
 const getOrderDb = async ({ order_id, user_id }) => {
   console.log(order_id,user_id)
   const { rows: order } = await pool.query(
-    `SELECT products.*, order_item.quantity 
+    `SELECT orders.*,products.*, order_item.quantity,order_item.order_item_id as order_item_id, order_item.discount as discount
       from orders 
       join order_item
       on order_item.order_id = orders.order_id
@@ -60,8 +66,42 @@ const getOrderDb = async ({ order_id, user_id }) => {
   return order;
 };
 
+const payOrderDb = async ({order_id,payment_status})=>{
+  let updatedRows = 0
+  if(payment_status==='COMPLETED'){
+    const {rowCount} = await pool.query(
+      `UPDATE orders SET payment_status=$2,is_paid=true,paid_at=now() where order_id=$1`,
+      [order_id,payment_status]
+    )
+    updatedRows = rowCount
+  }
+  else{
+    const {rowCount} = await pool.query(
+      `UPDATE orders SET payment_status = $2 where order_id=$1;`,
+      [order_id,payment_status]
+    )
+    updatedRows = rowCount
+  }
+  
+  console.log(order_id,payment_status)
+  return updatedRows;
+}
+
+const deliverOrderDb = async ({order_id})=>{
+  const {rowCount} = await pool.query(
+    `UPDATE orders SET delivered_at = now(),is_delivered=true where order_id=$1;`,
+    [order_id,payment_status]
+  )
+  console.log(rowCount)
+  console.log(order_id,payment_status)
+  return rowCount;
+}
+
 export {
   createOrderDb,
+  getAllOrdersByUserDb,
   getAllOrdersDb,
   getOrderDb,
+  payOrderDb,
+  deliverOrderDb
 };
