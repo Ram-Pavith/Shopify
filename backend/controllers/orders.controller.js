@@ -21,11 +21,22 @@ const createOrder = async (req, res) => {
 
 };
 
-const getAllOrders = async (req, res) => {
+const getAllOrdersByUser = async (req, res) => {
   const { page = 1 } = req.query;
-  const userId = req.user.user_id;
+  const userId = req.params.user_id;
   try{
-    const orders = await orderService.getAllOrders(userId, page);
+    const orders = await orderService.getAllOrdersByUser(userId, page);
+    res.status(200).json(orders);
+  }
+  catch(err){
+    res.status(400).json({message:err.message,stackTrace:err.stack})
+  }
+
+};
+
+const getAllOrders = async (req, res) => {
+  try{
+    const orders = await orderService.getAllOrders();
     res.status(200).json(orders);
   }
   catch(err){
@@ -75,6 +86,7 @@ const putOrderDeliverUpdate = async(req,res) =>{
 
 export {
   createOrder,
+  getAllOrdersByUser,
   getAllOrders,
   getOrder,
   putOrderPaymentUpdate,

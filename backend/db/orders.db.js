@@ -35,17 +35,19 @@ const createOrderDb = async ({
   return order;
 };
 
-const getAllOrdersDb = async ({ user_id, limit, offset }) => {
-  const { rowCount } = await pool.query(
+const getAllOrdersByUserDb = async ({ user_id, limit, offset }) => {
+  const { rows:orders } = await pool.query(
     "SELECT * from orders WHERE orders.user_id = $1",
     [user_id]
   );
-  const orders = await pool.query(
-    `SELECT order_id, user_id, status, date::date, amount, total 
-      from orders WHERE orders.user_id = $1 order by order_id desc limit $2 offset $3`,
-    [user_id, limit, offset]
+  return orders;
+};
+
+const getAllOrdersDb = async () => {
+  const { rows:orders } = await pool.query(
+    "SELECT * from orders"
   );
-  return { items: orders.rows, total: rowCount };
+  return orders;
 };
 
 const getOrderDb = async ({ order_id, user_id }) => {
@@ -86,6 +88,7 @@ const deliverOrderDb = async ({order_id})=>{
 
 export {
   createOrderDb,
+  getAllOrdersByUserDb,
   getAllOrdersDb,
   getOrderDb,
   payOrderDb,

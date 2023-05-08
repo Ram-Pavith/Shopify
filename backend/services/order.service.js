@@ -1,5 +1,6 @@
 import {
   createOrderDb,
+  getAllOrdersByUserDb,
   getAllOrdersDb,
   getOrderDb,
   payOrderDb,
@@ -17,11 +18,19 @@ class OrderService {
     }
   };
 
-  getAllOrders = async (user_id, page) => {
+  getAllOrdersByUser = async (user_id, page) => {
     const limit = 5;
     const offset = (page - 1) * limit;
     try {
-      return await getAllOrdersDb({ user_id, limit, offset });
+      return await getAllOrdersByUserDb({ user_id, limit, offset });
+    } catch (error) {
+      throw new ErrorHandler(error.statusCode, error.message);
+    }
+  };
+
+  getAllOrders = async () => {
+    try {
+      return await getAllOrdersDb();
     } catch (error) {
       throw new ErrorHandler(error.statusCode, error.message);
     }

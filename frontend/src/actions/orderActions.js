@@ -222,7 +222,7 @@ export const listMyOrders = () => async (dispatch, getState) => {
       },
     }
 
-    const { data } = await axios.get(`/api/orders/myorders`, config)
+    const { data } = await axios.get(`/api/orders/user/${userinfo.user.user_id}`, config)
 
     dispatch({
       type: ORDER_LIST_MY_SUCCESS,
