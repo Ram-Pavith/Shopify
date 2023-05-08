@@ -184,7 +184,7 @@ const Order = () => {
         return (Math.round(num * 100) / 100).toFixed(2)
       }
     let itemsPrice
-
+      const navigate = useNavigate()
     //const orderDetails = useSelector(state=>state.orderDetails)
     //let {loading,error,order} = orderDetails
      const orderDetails = JSON.parse(localStorage.getItem('orderItems'))
@@ -220,7 +220,11 @@ const Order = () => {
         console.log(status)
         localStorage.setItem('payment_status',status) 
         dispatch(payOrder(order[0].order_id,status))
+        if(successPay){
+            navigate("/")
+        }
     }
+
     //loading=false
 
 //     useEffect(()=>{
@@ -421,7 +425,7 @@ else{
                         const neworder = await actions.order.capture();
                         console.log("order",neworder)
                         localStorage.setItem('payment_status',neworder.status)
-                        dispatch(payOrder(JSON.stringify(neworder.status)))
+                       // dispatch(payOrder(neworder.status))
                         paymentHandler(neworder.status)
                     }}
                     onError={(err)=>{

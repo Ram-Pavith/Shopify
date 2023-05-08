@@ -134,10 +134,10 @@ export const payOrder = (orderId, paymentResult) => async (
         authToken:userinfo.token
       },
     }
-
+    console.log(orderId,paymentResult)
     const { data } = await axios.put(
-      `/api/orders/${orderId}/pay`,
-      paymentResult,
+      `/api/orders/${orderId}/pay/${paymentResult}`,
+      {},
       config
     )
       console.log("from order pay action",data)
@@ -146,6 +146,7 @@ export const payOrder = (orderId, paymentResult) => async (
       payload: data,
     })
   } catch (error) {
+    console.log("from error ",error)
     const message =
       error.response && error.response.data.message
         ? error.response.data.message

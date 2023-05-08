@@ -50,7 +50,8 @@ const getOrder = async (req, res) => {
 
 const putOrderPaymentUpdate = async(req,res) =>{
   try{
-    const payment_status = req.body.payment_status
+    const payment_status = req.params.payment_status
+    console.log("from pay order controller",payment_status)
     const order_id = req.params.order_id
     console.log("from controller",payment_status,order_id)
     const order = await orderService.payOrder({payment_status,order_id})

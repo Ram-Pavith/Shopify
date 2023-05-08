@@ -16,6 +16,6 @@ route.route("/").get(verifyToken, getAllOrders);
 
 route.route("/:order_id").get(verifyToken, getOrder);
 
-route.route("/:order_id/pay").put(verifyToken, putOrderPaymentUpdate)
+route.route("/:order_id/pay/:payment_status").put(verifyToken, putOrderPaymentUpdate)
 route.route("/:order_id/deliver").put(verifyToken,putOrderDeliverUpdate)
 export default route;
