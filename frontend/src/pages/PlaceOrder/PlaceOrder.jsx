@@ -231,12 +231,13 @@ if(offersApplied!==undefined){
   const totalPrice = () => {
     let total = 0;
     cart.forEach((item) => {
-      total += item.quantity * item.price;
+      total += item.quantity * ((item.price*(100-item.discount))/100);
     });
     priceVar = total.toFixed(2)
     totalVar = priceVar*(1.00 + tax_price) + shipping_price - shipping_discount
+    totalVar = parseFloat(cart[0].total).toFixed(2)
     if(totalVar>(shipping_price+5000)){totalVar-=shipping_price;shipping_discount=shipping_price}
-    totalVar = totalVar.toFixed(2)
+
     return total.toFixed(2);
   };
   const offers = JSON.parse(localStorage.getItem('offersApplied'))
@@ -346,7 +347,7 @@ if(offersApplied!==undefined){
               </SummaryItem>
               <SummaryItem>
                 <SummaryItemText>Subtotal :</SummaryItemText>
-                <SummaryItemPrice>$ {cart[0].total}</SummaryItemPrice>
+                <SummaryItemPrice>$ {priceVar}</SummaryItemPrice>
               </SummaryItem>
               <SummaryItem>
                 <SummaryItemText>Estimated Shipping :</SummaryItemText>
