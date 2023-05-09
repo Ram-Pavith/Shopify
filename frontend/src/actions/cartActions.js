@@ -9,10 +9,12 @@ import {
   CART_RESET,
   CART_PERSISTED_GET,
   CART_INCREMENT,
-  CART_DECREMENT
+  CART_DECREMENT,
+  CART_OFFERS_APPLY,
+
 } from '../constants/cartConstants.js'
 
-export const addToCart = ({product_id, quantity}) => async (dispatch, getState) => {
+export const addToCart = ({product_id, quantity,price}) => async (dispatch, getState) => {
   console.log(product_id,quantity)
   const userinfo = JSON.parse(localStorage.getItem('userInfo'))
   const config = {
@@ -21,11 +23,11 @@ export const addToCart = ({product_id, quantity}) => async (dispatch, getState) 
       authToken: userinfo.token
     },
   }
-  const { data } = await axios.post(`http://localhost:5000/api/cart/add`,{product_id,quantity:quantity},config)
+  const { data } = await axios.post(`http://localhost:5000/api/cart/add`,{product_id,price,quantity:quantity},config)
   dispatch({
     type: CART_ADD_ITEM,
     payload: {
-      product_id: product_id,
+      product_id: product_id, 
       name: data.data[0].name,
       image_url: data.data[0].image_url,
       price: data.data[0].price,
@@ -37,6 +39,7 @@ export const addToCart = ({product_id, quantity}) => async (dispatch, getState) 
 
   localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems))
 }
+
 
 
 export const getCart =  ()=> async(dispatch, getState)=>{
@@ -146,6 +149,25 @@ export const savePaymentMethod = (data) => (dispatch) => {
   })
 
   localStorage.setItem('paymentMethod', JSON.stringify(data))
+}
+
+export const applyOfferCart = ()=>async(dispatch,getState)=>{
+const cart_id = localStorage.getItem('cart_id')
+const userinfo = JSON.parse(localStorage.getItem('userInfo'))
+const config = {
+  headers: {
+    Authorization: `Bearer ${userinfo.token}`,
+    authToken: userinfo.token
+  },
+}
+
+    const {data} = await axios.post(`/api/offers/cart/applyoffer/${cart_id}`,{},config)
+    dispatch({
+        type:CART_OFFERS_APPLY,
+        payload:data,
+    })
+    localStorage.setItem('offers',JSON.stringify(data))
+
 }
 
 export const emptyCart = ()=>async (dispatch,getState)=>{

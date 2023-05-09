@@ -5,13 +5,14 @@ import styled from "styled-components";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import Announcement from "../../components/Announcement/Announcement.jsx";
 import { mobile } from "../../responsive.js";
-import {removeFromCart,incrementQuantityCart,decrementQuantityCart} from '../../actions/cartActions.js'
+import {removeFromCart,incrementQuantityCart,decrementQuantityCart, applyOfferCart} from '../../actions/cartActions.js'
 // import StripeCheckout from "react-stripe-checkout";
 import CheckoutSteps from "../../components/CheckoutSteps/CheckoutSteps.jsx"
 import { useEffect, useState } from "react";
 import {createOrder} from "../../actions/orderActions.js"
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import {BarLoader} from "react-spinners"
 import './PlaceOrder.scss'
 const KEY = process.env.REACT_APP_STRIPE;
 
@@ -186,11 +187,20 @@ const PlaceOrder = () => {
   const state = localStorage.getItem('state')
   const country = localStorage.getItem('country')
   const [stripeToken, setStripeToken] = useState(null);
+  let offerDetails = useSelector(store=>store.cart)
+  const {offers:offersApplied,loading:offersLoading,error:offerError} = offerDetails 
   const navigate = useNavigate();
   const cartDispatch = useDispatch();
   const orderDispatch = useDispatch()
+useEffect(()=>{
+cartDispatch(applyOfferCart())
+localStorage.setItem('offersApplied',JSON.stringify(offersApplied))
+},[cart])
+
   const orderCreateVar = useSelector(state=>state.orderCreate)
   const {loading,order} = orderCreateVar
+  console.log(offerDetails,offerDetails.offers)
+
   const checkoutHandler = ()=>{
     console.log(localStorage.getItem('cart_id'),user.user_id,priceVar,address,city,state,country,tax_price,shipping_price,totalVar)
     orderDispatch(createOrder({
@@ -227,6 +237,8 @@ const PlaceOrder = () => {
     totalVar = totalVar.toFixed(2)
     return total.toFixed(2);
   };
+  const offers = JSON.parse(localStorage.getItem('offersApplied'))
+
   totalPrice()
   useEffect(() => {
     const makeRequest = async () => {
@@ -243,111 +255,134 @@ const PlaceOrder = () => {
     };
     stripeToken && makeRequest();
   }, [stripeToken, cart.total, navigate]);
-  return (
-    <>
-    <CheckoutSteps step1 step2 step4/>
-    <Container>
-      <Announcement />
-      <Wrapper>
-        <Title>YOUR ORDER</Title>
-        <Top>
-          <TopButton type="filled"><Link className="link" to="/">CONTINUE SHOPPING</Link></TopButton>
-          <TopTexts>
-            <TopText>Shopping Bag({quantity})</TopText>
-          </TopTexts>
-          <TopButton onClick={checkoutHandler} type="filled">CHECKOUT NOW</TopButton>
-        </Top>
-        <Bottom>
-          <Info>
-            {cart.map((product) => (
-            <div className="item" key={product.cart_item_id}>
-              <Product>
-                <ProductDetail>
-                  <Image src={product.image_url} />
-                  <Details>
-                    <ProductName>
-                      <b>Product:</b> {product.name}
-                    </ProductName>
-                    <DeleteOutlinedIcon className="delete" 
-                    onClick={() => cartDispatch(removeFromCart(product.cart_item_id))}></DeleteOutlinedIcon>
-                    {/* <ProductId>
-                      <b>ID:</b> {product.product_id}
-                    </ProductId> */}
-                  </Details>
-                </ProductDetail>
-                <PriceDetail>
-                  <ProductAmountContainer>
-                    <AddIcon className='increment' onClick={()=>cartDispatch(incrementQuantityCart(product.cart_item_id))}/>
-                    <ProductAmount><b>Quantity: </b>{product.quantity}</ProductAmount>
-                    <RemoveIcon className='decrement' onClick={()=>cartDispatch(decrementQuantityCart(product.cart_item_id))}/>
-                  </ProductAmountContainer>
-                  <ProductPrice>
-                   <b>Price: </b> ${product.price} * {product.quantity} =   ${product.price * product.quantity}
-                  </ProductPrice>
-                </PriceDetail>
-              </Product>
-            </div>
 
-            ))}
-            <Hr />
-          </Info>
-          <Summary>
-            <SummaryTitle>ORDER SUMMARY</SummaryTitle>
-            <SummaryItem>
-              <SummaryItemText>Address :</SummaryItemText>
-              <SummaryItemText>{address}</SummaryItemText>
-            </SummaryItem>
-            <SummaryItem>
-              <SummaryItemText>City :</SummaryItemText>
-              <SummaryItemText>{city}</SummaryItemText>
-            </SummaryItem>
-            <SummaryItem>
-              <SummaryItemText>State :</SummaryItemText>
-              <SummaryItemText>{state}</SummaryItemText>
-            </SummaryItem>
-            <SummaryItem>
-              <SummaryItemText>Country :</SummaryItemText>
-              <SummaryItemText>{country}</SummaryItemText>
-            </SummaryItem>
-            <SummaryItem>
-              <SummaryItemText>Subtotal :</SummaryItemText>
-              <SummaryItemPrice>$ {priceVar}</SummaryItemPrice>
-            </SummaryItem>
-            <SummaryItem>
-              <SummaryItemText>Estimated Shipping :</SummaryItemText>
-              <SummaryItemPrice>${shipping_price}</SummaryItemPrice>
-            </SummaryItem>
-            <SummaryItem>
-              <SummaryItemText>Shipping Discount :</SummaryItemText>
-              <SummaryItemPrice>- ${shipping_discount}</SummaryItemPrice>
-            </SummaryItem>
-            <SummaryItem>
-              <SummaryItemText>Tax Rate ({tax_price}) :</SummaryItemText>
-              <SummaryItemPrice>({tax_price} * {priceVar}) {(tax_price*priceVar).toFixed(2)}</SummaryItemPrice>
-            </SummaryItem>
-            <SummaryItem type="total">
-              <SummaryItemText>Total :</SummaryItemText>
-              <SummaryItemPrice>${totalVar}</SummaryItemPrice>
-            </SummaryItem>
-            {/* <StripeCheckout
-              name="Lama Shop"
-              image="https://avatars.githubusercontent.com/u/1486366?v=4"
-              billingAddress
-              shippingAddress
-              description={`Your total is $${cart.total}`}
-              amount={cart.total * 100}
-              token={onToken}
-              stripeKey={KEY}
-            > */}
-              <Button type="submit" onClick={checkoutHandler}>CHECKOUT NOW</Button>
-            {/* </StripeCheckout> */}
-          </Summary>
-        </Bottom>
-      </Wrapper>
-    </Container>
-    </>
-    
-  );
+  if(offersLoading){
+    return <BarLoader/>
+  }
+  else{
+    return (
+      <>
+      <CheckoutSteps step1 step2 step4/>
+      <Container>
+        <Announcement />
+        <Wrapper>
+          <Title>YOUR ORDER</Title>
+          <Top>
+            <TopButton type="filled"><Link className="link" to="/">CONTINUE SHOPPING</Link></TopButton>
+            <TopTexts>
+              <TopText>Shopping Bag({quantity})</TopText>
+            </TopTexts>
+            <TopButton onClick={checkoutHandler} type="filled">CHECKOUT NOW</TopButton>
+          </Top>
+          <Bottom>
+            <Info>
+              {cart.map((product) => (
+              <div className="item" key={product.cart_item_id}>
+                <Product>
+                  <ProductDetail>
+                    <Image src={product.image_url} />
+                    <Details>
+                      <ProductName>
+                        <b>Product:</b> {product.name}
+                      </ProductName>
+                      <DeleteOutlinedIcon className="delete" 
+                      onClick={() => cartDispatch(removeFromCart(product.cart_item_id))}></DeleteOutlinedIcon>
+                      {/* <ProductId>
+                        <b>ID:</b> {product.product_id}
+                      </ProductId> */}
+                    </Details>
+                  </ProductDetail>
+                  <PriceDetail>
+                    <ProductAmountContainer>
+                      <AddIcon className='increment' onClick={()=>cartDispatch(incrementQuantityCart(product.cart_item_id))}/>
+                      <ProductAmount><b>Quantity: </b>{product.quantity}</ProductAmount>
+                      <RemoveIcon className='decrement' onClick={()=>cartDispatch(decrementQuantityCart(product.cart_item_id))}/>
+                    </ProductAmountContainer>
+                    <ProductAmountContainer>
+                          <ProductAmount><b>Discount: </b>{product.discount}%</ProductAmount>
+                        </ProductAmountContainer>
+                    <ProductPrice>
+                    <b>Price: </b> $<span className="oldPrice">{product.price}  </span>{(product.price*((100-product.discount)/100))} * {product.quantity} =   ${(product.price*((100-product.discount)/100)) * product.quantity}
+                    </ProductPrice>
+                  </PriceDetail>
+                </Product>
+              </div>
+  
+              ))}
+              <Hr />
+            </Info>
+                  <Summary>
+                  <SummaryTitle>OFFERS APPLIED</SummaryTitle>
+                  {offers.map((off)=>(
+                      <div className="item" key={off.offer_id}>
+                          <SummaryItem>
+                              <SummaryItemText>OFFER: {off.name}</SummaryItemText>
+                          </SummaryItem>
+                          <SummaryItem>
+                              <SummaryItemText>DISCOUNT: {off.discount}</SummaryItemText>
+                          </SummaryItem>
+                      </div>
+                  ))}
+                  </Summary>
+            <Summary>
+              <SummaryTitle>ORDER SUMMARY</SummaryTitle>
+              <SummaryItem>
+                <SummaryItemText>Address :</SummaryItemText>
+                <SummaryItemText>{address}</SummaryItemText>
+              </SummaryItem>
+              <SummaryItem>
+                <SummaryItemText>City :</SummaryItemText>
+                <SummaryItemText>{city}</SummaryItemText>
+              </SummaryItem>
+              <SummaryItem>
+                <SummaryItemText>State :</SummaryItemText>
+                <SummaryItemText>{state}</SummaryItemText>
+              </SummaryItem>
+              <SummaryItem>
+                <SummaryItemText>Country :</SummaryItemText>
+                <SummaryItemText>{country}</SummaryItemText>
+              </SummaryItem>
+              <SummaryItem>
+                <SummaryItemText>Subtotal :</SummaryItemText>
+                <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
+              </SummaryItem>
+              <SummaryItem>
+                <SummaryItemText>Estimated Shipping :</SummaryItemText>
+                <SummaryItemPrice>${shipping_price}</SummaryItemPrice>
+              </SummaryItem>
+              <SummaryItem>
+                <SummaryItemText>Shipping Discount :</SummaryItemText>
+                <SummaryItemPrice>- ${shipping_discount}</SummaryItemPrice>
+              </SummaryItem>
+              <SummaryItem>
+                <SummaryItemText>Tax Rate ({tax_price}) :</SummaryItemText>
+                <SummaryItemPrice>({tax_price} * {priceVar}) {(tax_price*priceVar).toFixed(2)}</SummaryItemPrice>
+              </SummaryItem>
+              <SummaryItem type="total">
+                <SummaryItemText>Total :</SummaryItemText>
+                <SummaryItemPrice>${totalVar}</SummaryItemPrice>
+              </SummaryItem>
+              {/* <StripeCheckout
+                name="Lama Shop"
+                image="https://avatars.githubusercontent.com/u/1486366?v=4"
+                billingAddress
+                shippingAddress
+                description={`Your total is $${cart.total}`}
+                amount={cart.total * 100}
+                token={onToken}
+                stripeKey={KEY}
+              > */}
+                <Button type="submit" onClick={checkoutHandler}>CHECKOUT NOW</Button>
+              {/* </StripeCheckout> */}
+            </Summary>
+          </Bottom>
+        </Wrapper>
+      </Container>
+      </>
+      
+    );
+  }
+  
 };
 
 export default PlaceOrder;

@@ -8,14 +8,15 @@ import {
   CART_RESET,
   CART_PERSISTED_GET,
   CART_INCREMENT,
-  CART_DECREMENT
+  CART_DECREMENT,
+  CART_OFFERS_APPLY
 } from '../constants/cartConstants.js'
 import { USER_LOGOUT } from '../constants/userConstants.js'
 const cartItems= []
 
 
 export const cartReducer = (
-  state = { cartItems: [], shippingAddress: {} },
+  state = { cartItems: [], shippinAddress:{},offers: [] },
   action
 ) => {
   switch (action.type) {
@@ -41,6 +42,12 @@ export const cartReducer = (
           cartItems: [...state.cartItems, item],
         }
       }
+    case CART_OFFERS_APPLY:
+      state.offers = [...action.payload]
+      return{
+        ...state,
+        offers:state.offers
+      } 
     case CART_INCREMENT:
       const incrementItem = state.cartItems.find((x)=>x.cart_item_id===action.payload)
       incrementItem.quantity+=1

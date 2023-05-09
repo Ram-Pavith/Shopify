@@ -2,7 +2,7 @@ import React, { useState,useEffect } from "react";
 import "./Cart.scss";
 import { useDispatch,useSelector } from "react-redux";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import { addToCart,getCart,persistedGetCart,removeFromCart,emptyCart } from "../../actions/cartActions.js";
+import { addToCart,getCart,persistedGetCart,applyOfferCart,removeFromCart,emptyCart } from "../../actions/cartActions.js";
 import { makeRequest } from "../../makeRequest";
 import { loadStripe } from "@stripe/stripe-js";
 import { useParams } from "react-router";
@@ -20,15 +20,18 @@ const Cart = () => {
   const order = orderCreateVar
   let cart = useSelector(store => store.cart)
   let {loading,error,cartItems} = cart
+  let offerDetails = useSelector(store=>store.cart)
+  const {offers:offersApplied,loading:offersLoading,error:offerError} = offerDetails 
   const userLogin = useSelector((state) => state.userLogin);
   const { loading:loginLoading,userInfo, error:loginError } = userLogin 
   let products = cartItems
   console.log(products)
+
   //let products = JSON.parse(localStorage.getItem('cart')===null?"{}":localStorage.getItem('cart')).items
-  console.log(products)
   useEffect(()=>{
     if(userInfo){
       dispatch(getCart())
+      dispatch(applyOfferCart())
       //dispatch(persistedGetCart())
       loading =false
     }
@@ -50,6 +53,7 @@ const Cart = () => {
   const stripePromise = loadStripe(
     "pk_test_eOTMlr8usx1ctymXqrik0ls700lQCsX2UB"
   );
+  console.log(offersApplied)
   const temp = [products]
   const OrderPage = async () => {
     if(localStorage.getItem('userInfo')===undefined||localStorage.getItem('userInfo')===null){
@@ -64,6 +68,9 @@ const Cart = () => {
 //   })
 //  )
  console.log(order)
+ console.log("offers Applied ",offersApplied)
+
+
  navigate("/shippingDetails") 
 }
 
@@ -72,7 +79,7 @@ const Cart = () => {
   if(products===null){
     return <div className="cart"><BarLoader/></div>
   }
-  if(products===""||products===undefined){
+  if(products===""||products===undefined||offersApplied===undefined){
     return <div className="cart">
       <div className="item">
         <p>Cart is Empty</p>

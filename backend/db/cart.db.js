@@ -12,7 +12,7 @@ const createCartDb = async (user_id) => {
 const getCartDb = async (user_id) => {
   // get cart items
   const cart = await pool.query(
-    `SELECT products.*,cart_item.cart_item_id, cart_item.quantity, round((products.price * cart_item.quantity)::numeric, 2) as subtotal from users
+    `SELECT products.*,cart_item.cart_item_id,cart_item.discount, cart_item.quantity, round((products.price * cart_item.quantity)::numeric, 2) as subtotal from users
       join cart on users.user_id = cart.user_id
       join cart_item on cart.cart_id = cart_item.cart_id
       join products on products.product_id = cart_item.product_id
@@ -21,18 +21,18 @@ const getCartDb = async (user_id) => {
       ,
     [user_id]
   );
-  console.log(user_id)
+  console.log(cart.rows)
   return cart.rows;
 };
 
 // add item to cart
-const addItemDb = async ({ cart_id, product_id, quantity }) => {
+const addItemDb = async ({ cart_id, product_id, quantity,price}) => {
   const cart_item_id = v4()
   await pool.query(
-    `INSERT INTO cart_item(cart_item_id,cart_id, product_id, quantity) 
-         VALUES($4,$1, $2, $3) ON CONFLICT (cart_id, product_id) 
+    `INSERT INTO cart_item(price,cart_item_id,cart_id, product_id, quantity) 
+         VALUES($5,$4,$1, $2, $3) ON CONFLICT (cart_id, product_id) 
         DO UPDATE set quantity = cart_item.quantity + 1 returning *`,
-    [cart_id, product_id, quantity,cart_item_id]
+    [cart_id, product_id, quantity,cart_item_id,price]
   );
 
   const results = await pool.query(
