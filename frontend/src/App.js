@@ -14,6 +14,7 @@ import PlaceOrder from "./pages/PlaceOrder/PlaceOrder.jsx"
 import Order from "./pages/Order/Order.jsx"
 import Shipping from './pages/Shipping/Shipping.jsx';
 import OrdersList from './pages/OrdersList/OrdersList.jsx';
+import LoadingPage from './pages/LoadingScreen/Loading.jsx';
 //import { Container } from 'react-bootstrap';
 
 const Layout = () => {
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
       {
         path:"/OrdersHistory",
         element:<OrdersList/>
+      },
+      {
+        path:"/Loading",
+        element:<LoadingPage/>
       }
 
     ],

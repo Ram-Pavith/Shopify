@@ -6,7 +6,6 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import Announcement from "../../components/Announcement/Announcement.jsx";
 import { mobile } from "../../responsive.js";
 import {removeFromCart,incrementQuantityCart,decrementQuantityCart, applyOfferCart} from '../../actions/cartActions.js'
-// import StripeCheckout from "react-stripe-checkout";
 import CheckoutSteps from "../../components/CheckoutSteps/CheckoutSteps.jsx"
 import { useEffect, useState } from "react";
 import {createOrder} from "../../actions/orderActions.js"
@@ -187,6 +186,7 @@ const PlaceOrder = () => {
   const state = localStorage.getItem('state')
   const country = localStorage.getItem('country')
   const [stripeToken, setStripeToken] = useState(null);
+  const [orderId,setOrderId] = useState(null)
   let offerDetails = useSelector(store=>store.cart)
   const {offers:offersApplied,loading:offersLoading,error:offerError} = offerDetails 
   const navigate = useNavigate();
@@ -196,16 +196,25 @@ const PlaceOrder = () => {
   const orderCreateVar = useSelector(state=>state.orderCreate)
   const {loading:orderLoading,order} = orderCreateVar
   console.log(offerDetails,offerDetails.offers)
+  console.log(orderCreateVar)
+  useEffect(()=>{
+    console.log("from order effect")
+    // if(!orderLoading&&localStorage.getItem('orderSet')==='SUCCESS'){
+    //   console.log("inside loop")
+    //   navigate(`/order/${localStorage.getItem('order_id')}`)
+    // }
+    if(order!==undefined && order.length>0){
+      setOrderId(order[0].order_id)
+      console.log("order id set ",orderId)
+    }
+  },[order,orderDispatch])
 useEffect(()=>{
 cartDispatch(applyOfferCart())
-if(offersApplied!==undefined){
-  localStorage.setItem('offersApplied',JSON.stringify(offersApplied))
-}
  offers = JSON.parse(localStorage.getItem('offersApplied'))
-if(!orderLoading&&localStorage.getItem('orderSet')==='SUCCESS'){
-  console.log("inside loop")
-  navigate(`/order/${localStorage.getItem('order_id')}`)
-}
+// if(!orderLoading&&localStorage.getItem('orderSet')==='SUCCESS'){
+//   console.log("inside loop")
+//   navigate(`/order/${localStorage.getItem('order_id')}`)
+// }
 },[cart,orderLoading])
 offers = JSON.parse(localStorage.getItem('offers'))
  
@@ -227,6 +236,16 @@ offers = JSON.parse(localStorage.getItem('offers'))
       payment_method:"PAYPAL"
   }))
   console.log(order)
+  navigate("/Loading")
+  // if(!orderLoading&&localStorage.getItem('orderSet')==='SUCCESS'){
+  //   console.log("inside loop")
+  //   navigate(`/order/${localStorage.getItem('order_id')}`)
+  // }
+
+  if( order!==undefined && order.length>0){
+    setOrderId(order[0].order_id)
+    console.log("order id set ",orderId)
+  }
   
   }
   const onToken = (token) => {
@@ -368,18 +387,7 @@ offers = JSON.parse(localStorage.getItem('offers'))
                 <SummaryItemText>Total :</SummaryItemText>
                 <SummaryItemPrice>${totalVar}</SummaryItemPrice>
               </SummaryItem>
-              {/* <StripeCheckout
-                name="Lama Shop"
-                image="https://avatars.githubusercontent.com/u/1486366?v=4"
-                billingAddress
-                shippingAddress
-                description={`Your total is $${cart.total}`}
-                amount={cart.total * 100}
-                token={onToken}
-                stripeKey={KEY}
-              > */}
                 <Button type="submit" onClick={checkoutHandler}>CHECKOUT NOW</Button>
-              {/* </StripeCheckout> */}
             </Summary>
           </Bottom>
         </Wrapper>

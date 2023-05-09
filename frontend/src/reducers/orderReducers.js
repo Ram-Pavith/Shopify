@@ -23,13 +23,14 @@ import {
   ORDER_CREATE_RESET,
 } from '../constants/orderConstants.js'
 
-export const orderCreateReducer = (state = {}, action) => {
+export const orderCreateReducer = (state = {order:[]}, action) => {
   switch (action.type) {
     case ORDER_CREATE_REQUEST:
       return {
         loading: true,
       }
     case ORDER_CREATE_SUCCESS:
+      console.log(action.payload)
       return {
         loading: false,
         success: true,

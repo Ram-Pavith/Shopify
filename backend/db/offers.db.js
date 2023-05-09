@@ -152,7 +152,7 @@ const offerApplyCartDb = async ({cart_id,user_id})=>{
     console.log("update cart table ",Updatecart)
     // return offers applied table
     const {rows:offers} = await pool.query(
-        `		SELECT o.name,o.offer_id from cart_item_offers_applied as cioa join offers as o on o.offer_id = cioa.offer_id join cart_item ci on cioa.cart_item_id = ci.cart_item_id where ci.cart_id =$1
+        `		SELECT * from cart_item_offers_applied as cioa join offers as o on o.offer_id = cioa.offer_id join cart_item ci on cioa.cart_item_id = ci.cart_item_id where ci.cart_id =$1
         `,
         [cart_id]
     )

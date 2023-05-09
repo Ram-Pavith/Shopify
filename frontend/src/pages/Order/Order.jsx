@@ -177,7 +177,7 @@ const Button = styled.button`
 
 const Order = () => {
     let order_id = useParams().order_id
-    if(order_id===null)order_id = localStorage.getItem('order_id')
+    while(order_id===null)order_id = localStorage.getItem('order_id')
     const dummy = (localStorage.getItem('order_id'))
     const dummyOffers = localStorage.getItem('offers')
     console.log(order_id)
