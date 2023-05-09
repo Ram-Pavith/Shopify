@@ -56,6 +56,7 @@ export const createOrder = (order) => async (dispatch, getState) => {
     const orderData  = await axios.get(`/api/orders/${data[0].order_id}`, config)
     console.log(orderData)
     localStorage.setItem('orderItems',JSON.stringify(orderData.data))
+    localStorage.removeItem('order_id')
     localStorage.setItem('order_id',data[0].order_id)
     localStorage.removeItem('cartItems')
   } catch (error) {
@@ -145,6 +146,7 @@ export const payOrder = (orderId, paymentResult) => async (
       type: ORDER_PAY_SUCCESS,
       payload: data,
     })
+    localStorage.removeItem('order_id')
   } catch (error) {
     console.log("from error ",error)
     const message =

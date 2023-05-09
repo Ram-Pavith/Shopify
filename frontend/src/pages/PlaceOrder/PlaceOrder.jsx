@@ -192,13 +192,16 @@ const PlaceOrder = () => {
   const navigate = useNavigate();
   const cartDispatch = useDispatch();
   const orderDispatch = useDispatch()
+  let offers
 useEffect(()=>{
 cartDispatch(applyOfferCart())
 if(offersApplied!==undefined){
   localStorage.setItem('offersApplied',JSON.stringify(offersApplied))
 }
-},[cart])
+ offers = JSON.parse(localStorage.getItem('offersApplied'))
 
+},[cart])
+offers = JSON.parse(localStorage.getItem('offers'))
   const orderCreateVar = useSelector(state=>state.orderCreate)
   const {loading,order} = orderCreateVar
   console.log(offerDetails,offerDetails.offers)
@@ -220,9 +223,9 @@ if(offersApplied!==undefined){
       payment_method:"PAYPAL"
   }))
   console.log(order)
-  if(order){
+  if(order && !loading){
     console.log("inside loop")
-    navigate(`/order/${localStorage.getItem('order_id')}`)
+    navigate(`/order/${order[0].order_id}`)
   }
   }
   const onToken = (token) => {
@@ -240,7 +243,6 @@ if(offersApplied!==undefined){
 
     return total.toFixed(2);
   };
-  const offers = JSON.parse(localStorage.getItem('offersApplied'))
 
   totalPrice()
   useEffect(() => {
