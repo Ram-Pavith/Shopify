@@ -194,7 +194,9 @@ const PlaceOrder = () => {
   const orderDispatch = useDispatch()
 useEffect(()=>{
 cartDispatch(applyOfferCart())
-localStorage.setItem('offersApplied',JSON.stringify(offersApplied))
+if(offersApplied!==undefined){
+  localStorage.setItem('offersApplied',JSON.stringify(offersApplied))
+}
 },[cart])
 
   const orderCreateVar = useSelector(state=>state.orderCreate)
@@ -256,10 +258,10 @@ localStorage.setItem('offersApplied',JSON.stringify(offersApplied))
     stripeToken && makeRequest();
   }, [stripeToken, cart.total, navigate]);
 
-  if(offersLoading){
-    return <BarLoader/>
-  }
-  else{
+  // if(offersLoading){
+  //   return <BarLoader/>
+  // }
+  // else{
     return (
       <>
       <CheckoutSteps step1 step2 step4/>
@@ -344,7 +346,7 @@ localStorage.setItem('offersApplied',JSON.stringify(offersApplied))
               </SummaryItem>
               <SummaryItem>
                 <SummaryItemText>Subtotal :</SummaryItemText>
-                <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
+                <SummaryItemPrice>$ {cart[0].total}</SummaryItemPrice>
               </SummaryItem>
               <SummaryItem>
                 <SummaryItemText>Estimated Shipping :</SummaryItemText>
@@ -381,7 +383,7 @@ localStorage.setItem('offersApplied',JSON.stringify(offersApplied))
       </>
       
     );
-  }
+  //}
   
 };
 

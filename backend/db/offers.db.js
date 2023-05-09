@@ -52,12 +52,12 @@ const offerApplyDb = async ({order_id,user_id})=>{
         console.log("updated rows count ",rowCount)
     })
     //update orders table
-    const{rows:priceOrderItems} = await pool.query(`select oi.price,oi.discount from order_item as oi join orders as o on oi.order_id = o.order_id where oi.order_id=$1`,[order_id])
+    const{rows:priceOrderItems} = await pool.query(`select oi.price,oi.discount,oi.quantity from order_item as oi join orders as o on oi.order_id = o.order_id where oi.order_id=$1`,[order_id])
     console.log("price order items ",priceOrderItems)
 
     let price = 0.0
     for(let j =0;j<priceOrderItems.length;j++){
-        price += ((priceOrderItems[j].price *(100- priceOrderItems[j].discount))/100)
+        price += ((priceOrderItems[j].price *(100- priceOrderItems[j].discount))/100)*priceOrderItems[j].quantity
     }
     console.log("update price ",price, (price*1.18)+10.00)
 
@@ -138,12 +138,12 @@ const offerApplyCartDb = async ({cart_id,user_id})=>{
         console.log("updated rows count ",rowCount)
     })
     //update cart table
-    const{rows:pricecartItems} = await pool.query(`select ci.price,ci.discount from cart_item as ci join cart as o on ci.cart_id = o.cart_id where ci.cart_id=$1`,[cart_id])
+    const{rows:pricecartItems} = await pool.query(`select ci.price,ci.discount,ci.quantity from cart_item as ci join cart as o on ci.cart_id = o.cart_id where ci.cart_id=$1`,[cart_id])
     console.log("price cart items ",pricecartItems)
 
     let price = 0.0
     for(let j =0;j<pricecartItems.length;j++){
-        price += ((pricecartItems[j].price *(100- pricecartItems[j].discount))/100)
+        price += ((pricecartItems[j].price *(100- pricecartItems[j].discount))/100)*pricecartItems[j].quantity
     }
     console.log("update price ",price, (price*1.18)+10.00)
 
