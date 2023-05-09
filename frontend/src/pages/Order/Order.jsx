@@ -176,7 +176,8 @@ const Button = styled.button`
 `;
 
 const Order = () => {
-    const order_id = useParams().order_id
+    let order_id = useParams().order_id
+    if(order_id===null)order_id = localStorage.getItem('order_id')
     const dummy = (localStorage.getItem('order_id'))
     const dummyOffers = localStorage.getItem('offers')
     console.log(order_id)
@@ -237,101 +238,6 @@ const Order = () => {
     }
    
 
-    //loading=false
-
-//     useEffect(()=>{
-//         const addPayPalScript = async () => {
-//       const script = document.createElement('script')
-//       script.type = 'text/javascript'
-//       script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`
-//       script.async = true
-//       script.onload = () => {
-//         setSdkReady(true)
-//       }
-//       document.body.appendChild(script)
-//     }
-
-//     if (!order || successPay || successDeliver || order._id !== order_id) {
-//       dispatch({ type: ORDER_PAY_RESET })
-//       dispatch({ type: ORDER_DELIVER_RESET })
-//       dispatch(getOrderDetails(order_id))
-//     } else if (!order.isPaid) {
-//       if (!window.paypal) {
-//         addPayPalScript()
-//       } else {
-//         setSdkReady(true)
-//       }
-//     }
-//   }, [dispatch, order_id, successPay, successDeliver, order])
-
-//   let cart = useSelector((state) => state.cart);
-//   cart = cart.cartItems
-//   const userInfo = JSON.parse(localStorage.getItem('userInfo'))
-//     const {user} = userInfo
-//   let priceVar
-//   let totalVar
-//   let tax_price = 0.18
-//   let shipping_price = 10.00 
-//   let shipping_discount = 0.00
-//   let quantity = cart.length
-//   const address = localStorage.getItem('address')
-//   const city = localStorage.getItem('city')
-//   const state = localStorage.getItem('state')
-//   const country = localStorage.getItem('country')
-//   const [stripeToken, setStripeToken] = useState(null);
-//   const navigate = useNavigate();
-//   const cartDispatch = useDispatch();
-//   const orderDispatch = useDispatch()
-//   const orderCreateVar = useSelector(state=>state.orderCreate)
-//   const order = orderCreateVar
-//   const checkoutHandler = ()=>{
-//     console.log(localStorage.getItem('cart_id'),user.user_id,priceVar,address,city,state,country,tax_price,shipping_price,totalVar)
-//     orderDispatch(createOrder({
-//       cart_id:localStorage.getItem('cart_id'),
-//       user_id:user.user_id,
-//       price: priceVar,
-//       payment_method:'PAYPAL',
-//       address:address,
-//       city:city,
-//       state:state,
-//       country:country,
-//       shipping_price:shipping_price,
-//       tax_price:tax_price,
-//       total:totalVar,
-//       payment_method:"PAYPAL"
-//   }))
-//   }
-//   console.log(order)
-//   const onToken = (token) => {
-//     setStripeToken(token);
-//   };
-//   const totalPrice = () => {
-//     let total = 0;
-//     cart.forEach((item) => {
-//       total += item.quantity * item.price;
-//     });
-//     priceVar = total.toFixed(2)
-//     totalVar = priceVar*(1.00 + tax_price) + shipping_price - shipping_discount
-//     if(totalVar>(shipping_price+5000)){totalVar-=shipping_price;shipping_discount=shipping_price}
-//     totalVar = totalVar.toFixed(2)
-//     return total.toFixed(2);
-//   };
-//   totalPrice()
-//   useEffect(() => {
-//     const makeRequest = async () => {
-//       try {
-//         totalPrice()
-//         // const res = await userRequest.post("/checkout/payment", {
-//         //   tokenId: stripeToken.id,
-//         //   amount: 500,
-//         // });
-//         navigate.push("/success", {
-//         //   stripeData: res.data,
-//           products: cart, });
-//       } catch {}
-//     };
-//     stripeToken && makeRequest();
-//   }, [stripeToken, cart.total, navigate]);
 if(orderDetailsLoading||offersLoading){
     return <BarLoader/>
 }

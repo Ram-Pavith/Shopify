@@ -56,6 +56,7 @@ export const createOrder = (order) => async (dispatch, getState) => {
     const orderData  = await axios.get(`/api/orders/${data[0].order_id}`, config)
     console.log(orderData)
     localStorage.setItem('orderItems',JSON.stringify(orderData.data))
+    localStorage.setItem('orderSet','SUCCESS')
     localStorage.removeItem('order_id')
     localStorage.setItem('order_id',data[0].order_id)
     localStorage.removeItem('cartItems')
@@ -142,6 +143,7 @@ export const payOrder = (orderId, paymentResult) => async (
       config
     )
       console.log("from order pay action",data)
+      localStorage.removeItem('orderSet')
     dispatch({
       type: ORDER_PAY_SUCCESS,
       payload: data,

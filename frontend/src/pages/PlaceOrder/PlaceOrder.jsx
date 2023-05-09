@@ -193,18 +193,22 @@ const PlaceOrder = () => {
   const cartDispatch = useDispatch();
   const orderDispatch = useDispatch()
   let offers
+  const orderCreateVar = useSelector(state=>state.orderCreate)
+  const {loading:orderLoading,order} = orderCreateVar
+  console.log(offerDetails,offerDetails.offers)
 useEffect(()=>{
 cartDispatch(applyOfferCart())
 if(offersApplied!==undefined){
   localStorage.setItem('offersApplied',JSON.stringify(offersApplied))
 }
  offers = JSON.parse(localStorage.getItem('offersApplied'))
-
-},[cart])
+if(!orderLoading&&localStorage.getItem('orderSet')==='SUCCESS'){
+  console.log("inside loop")
+  navigate(`/order/${localStorage.getItem('order_id')}`)
+}
+},[cart,orderLoading])
 offers = JSON.parse(localStorage.getItem('offers'))
-  const orderCreateVar = useSelector(state=>state.orderCreate)
-  const {loading,order} = orderCreateVar
-  console.log(offerDetails,offerDetails.offers)
+ 
 
   const checkoutHandler = ()=>{
     console.log(localStorage.getItem('cart_id'),user.user_id,priceVar,address,city,state,country,tax_price,shipping_price,totalVar)
@@ -223,10 +227,7 @@ offers = JSON.parse(localStorage.getItem('offers'))
       payment_method:"PAYPAL"
   }))
   console.log(order)
-  if(order && !loading){
-    console.log("inside loop")
-    navigate(`/order/${order[0].order_id}`)
-  }
+  
   }
   const onToken = (token) => {
     setStripeToken(token);

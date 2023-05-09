@@ -167,7 +167,7 @@ const offerApplyCartDb = async ({cart_id,user_id})=>{
     else{
         console.log("inside the true loop")
         const { rows:cartItemsOffersApplied} = await pool.query(
-            `SELECT * from cart_item_offers_applied as cioa join cart_item as ci on ci.cart_item_id = cioa.cart_item_id where cioa.offer_id<>$2 and ci.cart_id = $1  `,[cart_id,(groupedOffer[0]!==undefined?groupedOffer[0].offer_id:null)]
+            `SELECT *,ci.discount as discount from cart_item_offers_applied as cioa join cart_item as ci on ci.cart_item_id = cioa.cart_item_id where cioa.offer_id<>$2 and ci.cart_id = $1  `,[cart_id,(groupedOffer[0]!==undefined?groupedOffer[0].offer_id:null)]
         )
         return offers
 
