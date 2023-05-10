@@ -8,6 +8,8 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useParams } from "react-router";
 import {BarLoader} from "react-spinners"
 import {createOrder} from "../../actions/orderActions"
+import {toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 const Cart = () => {
   const cartId = localStorage.getItem('cart')
@@ -103,7 +105,16 @@ const Cart = () => {
             </div>
             <DeleteOutlinedIcon
               className="delete"
-              onClick={() => dispatch(removeFromCart(item.cart_item_id))}
+              onClick={() => {dispatch(removeFromCart(item.cart_item_id));
+                toast.error("Item Removed!!",{
+                  position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",})  ;}}
             />
           </div>
         ))}
@@ -112,7 +123,17 @@ const Cart = () => {
           <span>${totalPrice()}</span>
         </div>
         <button onClick={()=>OrderPage()}>PROCEED TO ORDER</button>
-        <span className="reset" onClick={() => dispatch(emptyCart())}>
+        <span className="reset" onClick={() => {dispatch(emptyCart());
+         toast.error("Cart Reset!!",{
+          position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",})  ;
+        }}>
           Reset Cart
         </span>
       </div>

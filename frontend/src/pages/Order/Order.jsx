@@ -11,6 +11,8 @@ import { Link } from "react-router-dom";
 import axios from 'axios'
 import './Order.scss'
 import {BarLoader} from 'react-spinners'
+import {toast,ToastContainer} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import {PayPalScriptProvider,PayPalButtons} from '@paypal/react-paypal-js'
 import {
     ORDER_PAY_RESET,
@@ -231,10 +233,36 @@ const Order = () => {
     const paymentHandler = (status)=>{   
         console.log(status)
         localStorage.setItem('payment_status',status) 
-        dispatch(payOrder(order[0].order_id,status))
-        if(!loadingPay && successPay){
+        if(status==='COMPLETED'){
+          dispatch(payOrder(order[0].order_id,status))
+          if(!loadingPay && successPay){
+            toast.success("Payment Successfull",{
+              position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",})  
             navigate("/")
+          }
         }
+        else{
+          dispatch(payOrder(order[0].order_id,status))
+          if(!loadingPay && successPay){
+            toast.error("Payment Failed",{
+              position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",})  
+          }
+        }
+        
     }
    
 
@@ -369,6 +397,7 @@ else{
                     }}
                     ></PayPalButtons>
                   </PayPalScriptProvider>
+                  <ToastContainer/>
               </Summary>
             </Bottom>
           </Wrapper>

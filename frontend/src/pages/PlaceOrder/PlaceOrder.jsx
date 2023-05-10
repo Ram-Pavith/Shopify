@@ -13,6 +13,8 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import {BarLoader} from "react-spinners"
 import './PlaceOrder.scss'
+import {toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 const KEY = process.env.REACT_APP_STRIPE;
 
 const Container = styled.div``;
@@ -311,7 +313,17 @@ offers = JSON.parse(localStorage.getItem('offers'))
                         <b>Product:</b> {product.name}
                       </ProductName>
                       <DeleteOutlinedIcon className="delete" 
-                      onClick={() => cartDispatch(removeFromCart(product.cart_item_id))}></DeleteOutlinedIcon>
+                      onClick={() => {cartDispatch(removeFromCart(product.cart_item_id));
+                        toast.error("Item Removed!!",{
+                          position: "top-right",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",})  ;}}></DeleteOutlinedIcon>
+                            <ToastContainer/>
                       {/* <ProductId>
                         <b>ID:</b> {product.product_id}
                       </ProductId> */}

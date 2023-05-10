@@ -4,7 +4,9 @@ import { mobile } from "../../responsive";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { register } from '../../actions/userActions';
-
+import {toast,ToastContainer} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { useNavigate } from 'react-router';
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -67,6 +69,7 @@ const Register = (history) => {
   const dispatch = useDispatch()
   const userRegister = useSelector((state) => state.userRegister)
   const { loading, error, userInfo } = userRegister
+  const navigate = useNavigate()
   useEffect(() => {
     if (userInfo) {
     }
@@ -75,8 +78,43 @@ const Register = (history) => {
   const submitHandler = (e) => {
     e.preventDefault()
     if (password !== confirmPassword) {
-      setMessage('Passwords do not match')
+      toast.error('Passwords do not match',{
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        })
     } else {
+      if(error){
+        console.log(error)
+        toast.error(error, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          });
+      }
+      //const{userInfo,loading,error} = dispatch(login(username, password ));
+      if(!error){
+        toast.success("Register Successfull",{
+        position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",})
+        navigate('/login')
+      }
       console.log(email,name,password)
       dispatch(register(name, email, password))
     }
@@ -96,6 +134,7 @@ const Register = (history) => {
             data in accordance with the <b>PRIVACY POLICY</b>
           </Agreement>
           <Button type="submit">Register</Button>
+          <ToastContainer/>
         </Form>
       </Wrapper>
     </Container>

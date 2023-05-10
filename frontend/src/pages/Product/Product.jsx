@@ -12,6 +12,9 @@ import { listProductDetails } from "../../actions/productActions";
 import axios from 'axios'
 import {useNavigate } from 'react-router-dom';
 import { BarLoader } from "react-spinners";
+import {toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 const Product = () => {
   const id = useParams().product_id;
   console.log(id)
@@ -85,11 +88,22 @@ const Product = () => {
                   quantity:quantity,
                   count_in_stock:data.count_in_stock
                 })
-              )}
+              )
+              toast.success("Added to cart",{
+                position: "top-right",
+                  autoClose: 3000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "colored",})  ;
+            }
             }
           >
             <AddShoppingCartIcon /> ADD TO CART
           </button>
+          <ToastContainer/>
           <div className="links">
             <div className="item">
               <FavoriteBorderIcon /> ADD TO WISH LIST

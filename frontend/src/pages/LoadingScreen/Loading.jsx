@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import { BarLoader } from 'react-spinners';
-
+import "./Loading.scss"
 const LoadingPage = ()=>{
 
     const order_id = localStorage.getItem('order_id')
@@ -25,8 +25,12 @@ const LoadingPage = ()=>{
     },[order_id,order])
     console.log(order)
     return (
-        <div>
-            <BarLoader/>
+        <div className='LoadingBar'>
+            <center>
+                <div className='center'>
+                <BarLoader height={6} width={300}/>
+                </div>
+            </center>
         </div>
     )
 }

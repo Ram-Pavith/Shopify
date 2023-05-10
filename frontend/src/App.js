@@ -15,8 +15,7 @@ import Order from "./pages/Order/Order.jsx"
 import Shipping from './pages/Shipping/Shipping.jsx';
 import OrdersList from './pages/OrdersList/OrdersList.jsx';
 import LoadingPage from './pages/LoadingScreen/Loading.jsx';
-//import { Container } from 'react-bootstrap';
-
+import { ToastContainer } from 'react-toastify';
 const Layout = () => {
   return (
     <div className="app">
@@ -80,6 +79,7 @@ const router = createBrowserRouter([
 function App() {
   return (
     <div>
+      <ToastContainer/>
       <RouterProvider router={router} />
     </div>
   );

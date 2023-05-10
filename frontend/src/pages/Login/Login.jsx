@@ -6,6 +6,8 @@ import { mobile } from "../../responsive";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
+import {toast,ToastContainer} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -73,6 +75,7 @@ const Error = styled.span`
 const Login = (location,history) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const errorToast = ()=>toast.error('Wrong Email or Password')
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userLogin = useSelector((state) => state.userLogin);
@@ -91,10 +94,34 @@ const Login = (location,history) => {
     dispatch(login(email, password))
     console.log(email)
     console.log(password)
+    if(error){
+      console.log(error)
+      toast.error(error, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
+    }
     //const{userInfo,loading,error} = dispatch(login(username, password ));
-    navigate('/')
+    if(!error){
+      toast.success("Login Successfull",{
+      position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",})
+      navigate('/')
+    }
     console.log(userInfo)
-
+ 
   };
   return (
     <Container>
@@ -115,6 +142,7 @@ const Login = (location,history) => {
           <Button onClick={handleClick} >{/*disabled={true}> {/*isFetching}>*/}
             LOGIN
           </Button>
+          <ToastContainer/>
           {/* {error && <Error>Something went wrong...</Error>} */}
           {/* <Link>DO NOT YOU REMEMBER THE PASSWORD?</Link> */}
           <Link className='link' to="/register">CREATE A NEW ACCOUNT</Link>

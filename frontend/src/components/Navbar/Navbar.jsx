@@ -26,9 +26,15 @@ const Navbar = () => {
   //const userInfo = JSON.parse(localStorage.getItem('userInfo'))
   console.log(cart)
   const logoutHandler = () =>{const message = dispatch(logout())
-    toast.success('Logout Successfull !', {
-      position: toast.POSITION.TOP_RIGHT
-  });
+    toast.success("Logout Successfull",{
+      position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",})  ;
   }
   useEffect(()=>{
     if(userInfo){
