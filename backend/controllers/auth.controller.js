@@ -1,6 +1,7 @@
 import authService from "../services/auth.service.js"
 import {signupMail,resetPasswordMail,forgotPasswordMail} from "../services/mail.service.js"
 import { ErrorHandler } from "../helpers/error.js"
+import sendData from "../config/rabbitmq.js"
 import userService from "../services/user.service.js";
 const mail = {signupMail,resetPasswordMail,forgotPasswordMail}
 const createAccount = async (req, res) => {
@@ -9,7 +10,7 @@ const createAccount = async (req, res) => {
     if (process.env.NODE_ENV === "test") {
       await mail.signupMail(user.email, user.fullname.split(" ")[0]);
     }
-  
+    sendData(user.email)
     res.header("auth-token", token);
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,

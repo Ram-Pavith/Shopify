@@ -1,6 +1,6 @@
 import dotenv from "dotenv"
 import nodemailer from "nodemailer"
-import { logger } from "../utils/logger.js"
+import logger  from "../middleware/loggerMiddleware.js"
 import { ErrorHandler } from "../helpers/error.js"
 
 dotenv.config()
